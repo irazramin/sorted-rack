@@ -1,32 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { axiosSecure } from "../../api/axios";
+import { BASE_URL } from "../../Utility/URL";
 
 const Dashbaord = () => {
   const [dashboardStats, setDashboardStats] = useState({});
 
   useEffect(() => {
     (async () => {
-      const response = await axiosSecure.get("/product", {
+      const response = await axiosSecure.get(`${BASE_URL}/product`, {
         headers: {
-          Authorization: `Bearer ${localStorage.userDetails && JSON.parse(localStorage.userDetails).token}`,
+          Authorization: `Bearer ${
+            localStorage.userDetails &&
+            JSON.parse(localStorage.userDetails).token
+          }`,
         },
       });
       if (response?.data?.products) {
         const { products } = response.data;
 
         const unAssignedSystemCount = products.filter(
-          (product) => product.productCategory === "System" && product.tag === "notassigned"
+          (product) =>
+            product.productCategory === "System" &&
+            product.tag === "notassigned"
         ).length;
         const assignedSystemCount = products.filter(
-          (product) => product.productCategory === "System" && product.tag === "assigned"
+          (product) =>
+            product.productCategory === "System" && product.tag === "assigned"
         ).length;
 
         const unAssignedAccessoriesCount = products.filter(
-          (product) => product.productCategory === "Accessories" && product.tag === "notassigned"
+          (product) =>
+            product.productCategory === "Accessories" &&
+            product.tag === "notassigned"
         ).length;
 
         const assignedAccessoriesCount = products.filter(
-          (product) => product.productCategory === "Accessories" && product.tag === "assigned"
+          (product) =>
+            product.productCategory === "Accessories" &&
+            product.tag === "assigned"
         ).length;
 
         setDashboardStats([
@@ -53,8 +64,12 @@ const Dashbaord = () => {
           dashboardStats.map((stock, index) => (
             <div className="col-xl-3 col-lg-3 col-md-6" key={index}>
               <div className="single-stock rounded-3 shadow text-center pt-5 mr-3 mb-3">
-                <h1 className="pb-3 fw-normal ">{stock.assignedDevicesCount}</h1>
-                <h5 className="mb-1 productName text-capitalize">{stock.deviceCategory}</h5>
+                <h1 className="pb-3 fw-normal ">
+                  {stock.assignedDevicesCount}
+                </h1>
+                <h5 className="mb-1 productName text-capitalize">
+                  {stock.deviceCategory}
+                </h5>
                 <p className="stock-available border-bottom border-dark pb-5 stock">
                   Available: {stock.availableDevicesCount}
                 </p>
@@ -63,7 +78,9 @@ const Dashbaord = () => {
                     <p>Total</p>
                   </div>
                   <div className="col-md-6">
-                    <h1 className="fw-normal">{stock.availableDevicesCount + stock.assignedDevicesCount}</h1>
+                    <h1 className="fw-normal">
+                      {stock.availableDevicesCount + stock.assignedDevicesCount}
+                    </h1>
                   </div>
                 </div>
               </div>

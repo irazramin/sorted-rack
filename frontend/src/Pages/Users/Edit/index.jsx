@@ -11,6 +11,7 @@ import { axiosSecure } from "../../../api/axios";
 import useAxios from "../../../Hooks/useAxios";
 import "./Edit.scss";
 import { Toaster } from "../../../component/Toaster/Toaster";
+import { BASE_URL } from "../../../Utility/URL";
 const EditUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const EditUser = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: `/user/${id}`,
+      url: `${BASE_URL}/user/${id}`,
       requestConfig: [
         {
           headers: {

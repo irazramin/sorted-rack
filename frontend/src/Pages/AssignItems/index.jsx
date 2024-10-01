@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { BsGear } from 'react-icons/bs';
+import { BsGear } from "react-icons/bs";
 import { BiCheckCircle } from "react-icons/bi";
 import { Form, Table, Toast, Container, Dropdown, Col } from "react-bootstrap";
 import { axiosSecure } from "../../api/axios";
 import PaginationComponent from "../../component/Pagination/Pagination";
 import Columns from "../../constants/AssigmentColumns.json";
+import { BASE_URL } from "../../Utility/URL";
 
 const AssignItem = () => {
   const [columns, setColumns] = useState(Columns);
@@ -16,9 +17,11 @@ const AssignItem = () => {
   const [showToaster, setShowToaster] = useState(false);
 
   const getAssignedDeviceDetails = async () => {
-    const response = await axiosSecure.get("/assignedProduct", {
+    const response = await axiosSecure.get(`${BASE_URL}/assignedProduct`, {
       headers: {
-        Authorization: `Bearer ${localStorage.userDetails && JSON.parse(localStorage.userDetails).token}`,
+        Authorization: `Bearer ${
+          localStorage.userDetails && JSON.parse(localStorage.userDetails).token
+        }`,
       },
     });
 
@@ -28,7 +31,8 @@ const AssignItem = () => {
   const getDate = (date) => {
     const newDate = new Date(date);
     const dt = newDate.getUTCDate();
-    const month = newDate.getUTCMonth() + 1 === 13 ? 12 : newDate.getUTCMonth() + 1;
+    const month =
+      newDate.getUTCMonth() + 1 === 13 ? 12 : newDate.getUTCMonth() + 1;
     const year = newDate.getUTCFullYear();
     return `${dt}-${month}-${year}`;
   };
@@ -42,7 +46,10 @@ const AssignItem = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.userDetails && JSON.parse(localStorage.userDetails).token}`,
+            Authorization: `Bearer ${
+              localStorage.userDetails &&
+              JSON.parse(localStorage.userDetails).token
+            }`,
           },
         }
       );
@@ -68,7 +75,9 @@ const AssignItem = () => {
     setTotalItems(filteredResult?.length);
 
     if (search) {
-      filteredResult = filteredResult.filter((result) => result.userFname.toLowerCase().includes(search.toLowerCase()));
+      filteredResult = filteredResult.filter((result) =>
+        result.userFname.toLowerCase().includes(search.toLowerCase())
+      );
     }
     return filteredResult?.slice(
       (currentPage - 1) * ITEMS_PER_PAGE,
@@ -79,14 +88,21 @@ const AssignItem = () => {
   const handlerCheckbox = (e) => {
     const checkboxStatus = e.target.checked;
     const name = e.target.name;
-    const updatedColumns = columns.length > 0  && columns.map((column) => {
-      if (column.name === name) {
-        column.show = !column.show;
-      }
-      return column;
-    });
+    const updatedColumns =
+      columns.length > 0 &&
+      columns.map((column) => {
+        if (column.name === name) {
+          column.show = !column.show;
+        }
+        return column;
+      });
     setColumns(updatedColumns);
-    setTimeout(() => (document.querySelectorAll(`input[name=${name}]`)[0].checked = checkboxStatus), 500);
+    setTimeout(
+      () =>
+        (document.querySelectorAll(`input[name=${name}]`)[0].checked =
+          checkboxStatus),
+      500
+    );
   };
 
   return (
@@ -95,20 +111,38 @@ const AssignItem = () => {
         <div className="col-9">
           <h2 className="py-3">Assigned Devices</h2>
         </div>
-        <Form.Group as={Col} md="2" className="pe-3" controlId="validationCustom01">
-          <Form.Control onChange={handleSearch} type="text" placeholder="Search devices" />
+        <Form.Group
+          as={Col}
+          md="2"
+          className="pe-3"
+          controlId="validationCustom01"
+        >
+          <Form.Control
+            onChange={handleSearch}
+            type="text"
+            placeholder="Search devices"
+          />
         </Form.Group>
       </div>
 
       <div className="d-flex justify-content-end">
         <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic" className="table-column-btn">
+          <Dropdown.Toggle
+            variant="success"
+            id="dropdown-basic"
+            className="table-column-btn"
+          >
             <BsGear />
           </Dropdown.Toggle>
           <Dropdown.Menu className="table-column-filter">
             {columns.slice(5).map((column, index) => (
               <Dropdown.Item key={index}>
-                <input type="checkbox" name={column.name} onChange={handlerCheckbox} checked={column.show} />
+                <input
+                  type="checkbox"
+                  name={column.name}
+                  onChange={handlerCheckbox}
+                  checked={column.show}
+                />
                 <label>&nbsp;{column.fieldName}</label>
               </Dropdown.Item>
             ))}
@@ -138,11 +172,16 @@ const AssignItem = () => {
         <Table striped hover responsive>
           <thead>
             <tr>
-              {columns.length > 0  && columns.map(({ id, fieldName, name, show }) => (
-                <th id={name} className={`${show ? "show" : "hide"} `} key={id}>
-                  {fieldName}
-                </th>
-              ))}
+              {columns.length > 0 &&
+                columns.map(({ id, fieldName, name, show }) => (
+                  <th
+                    id={name}
+                    className={`${show ? "show" : "hide"} `}
+                    key={id}
+                  >
+                    {fieldName}
+                  </th>
+                ))}
 
               <th>Actions</th>
             </tr>
@@ -151,11 +190,12 @@ const AssignItem = () => {
             {filtered.map((item, index) => {
               return (
                 <tr key={index}>
-                  {columns.length > 0  && columns.map(({ name, show }) => (
-                    <td id={name} className={`${show ? "show" : "hide"} `}>
-                      {item[name] || "---"}
-                    </td>
-                  ))}
+                  {columns.length > 0 &&
+                    columns.map(({ name, show }) => (
+                      <td id={name} className={`${show ? "show" : "hide"} `}>
+                        {item[name] || "---"}
+                      </td>
+                    ))}
                   <td id="actions" className="text-center">
                     <i
                       className="bi bi-person-dash-fill px-1"

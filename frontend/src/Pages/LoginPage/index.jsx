@@ -9,7 +9,8 @@ import { BiErrorCircle } from "react-icons/bi";
 
 import { axiosOpen } from "../../api/axios";
 import logo from "../../assests/images/site-logo.png";
-const LOGIN_URL = "http://localhost:4000/api/st/auth/login";
+import { BASE_URL } from "../../Utility/URL";
+const LOGIN_URL = `${BASE_URL}/auth/login`;
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -24,8 +25,10 @@ const LoginForm = () => {
   // const [userData, error, loading, axiosFetch] = useAxios();
 
   useEffect(() => {
+    console.log("called");
     if (userToken) {
       const decodedToken = jwt_decode(userToken);
+      console.log("called", decodedToken, userToken);
       const { email, role, branch, userId } = decodedToken;
       const userDetails = {
         branch,
@@ -47,6 +50,7 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const response = await axiosOpen.post(LOGIN_URL, { email, password });
+      console.log(response);
       setUserToken(response?.data?.token);
     } catch (err) {
       if (err.response.status === 401) {

@@ -10,6 +10,7 @@ import { axiosSecure } from "../../../api/axios";
 import useAxios from "../../../Hooks/useAxios";
 import "./listUser.scss";
 import PaginationComponent from "../../../component/Pagination/Pagination";
+import { BASE_URL } from "../../../Utility/URL";
 const ListUser = () => {
   const [response, error, loading, axiosFetch] = useAxios();
   const [search, setSearch] = useState("");
@@ -21,7 +22,7 @@ const ListUser = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: "/user",
+      url: `${BASE_URL}/user`,
       requestConfig: [
         {
           headers: {
@@ -64,8 +65,10 @@ const ListUser = () => {
     setTotalItems(filteredResult?.length);
 
     if (search) {
-      filteredResult = filteredResult.filter((currentItem) =>
-        currentItem.fname.toLowerCase().includes(search.toLowerCase()) || currentItem.username.toLowerCase().includes(search.toLowerCase())
+      filteredResult = filteredResult.filter(
+        (currentItem) =>
+          currentItem.fname.toLowerCase().includes(search.toLowerCase()) ||
+          currentItem.username.toLowerCase().includes(search.toLowerCase())
       );
     }
     return filteredResult?.slice(

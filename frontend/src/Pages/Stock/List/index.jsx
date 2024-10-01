@@ -18,9 +18,10 @@ import { StockContext } from "../../../contexts/StockContext";
 import PaginationComponent from "../../../component/Pagination/Pagination";
 import { Col, Form } from "react-bootstrap";
 import { Toaster } from "../../../component/Toaster/Toaster";
+import { BASE_URL } from "../../../Utility/URL";
 
 const deleteStock = (stockItemId) =>
-  axiosSecure.delete(`/product/${stockItemId}`, {
+  axiosSecure.delete(`${BASE_URL}/product/${stockItemId}`, {
     headers: {
       Authorization: `Bearer ${
         localStorage.userDetails && JSON.parse(localStorage.userDetails).token
@@ -69,7 +70,7 @@ const ListStock = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: "/product",
+      url: `${BASE_URL}/product`,
       requestConfig: [
         {
           headers: {
@@ -83,7 +84,7 @@ const ListStock = () => {
     });
 
   const getAllUsers = async () => {
-    const { data } = await axiosSecure.get("/user", {
+    const { data } = await axiosSecure.get(`${BASE_URL}/user`, {
       headers: {
         Authorization: `Bearer ${
           localStorage.userDetails && JSON.parse(localStorage.userDetails).token
@@ -110,7 +111,7 @@ const ListStock = () => {
 
     setShowLoader(true);
     await axiosSecure.post(
-      "/assignedProduct",
+      `${BASE_URL}/assignedProduct`,
       {
         branch: "Goa",
         user: selectedUserId,

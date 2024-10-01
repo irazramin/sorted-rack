@@ -10,6 +10,7 @@ import "./users.scss";
 import { axiosSecure } from "../../../api/axios";
 import * as yup from "yup";
 import { Toaster } from "../../../component/Toaster/Toaster";
+import { BASE_URL } from "../../../Utility/URL";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First Name is required"),
@@ -22,7 +23,7 @@ const schema = yup.object().shape({
 
 const handleOnSubmit = (values) =>
   axiosSecure.post(
-    "/auth/register",
+    `${BASE_URL}/auth/register`,
     {
       fname: values.firstName,
       lname: values.lastName,
@@ -56,7 +57,7 @@ const AddUser = () => {
           userType: "",
           branch: "",
           status: "",
-          username:""
+          username: "",
         }}
         onSubmit={async (values, { setSubmitting }) => {
           try {
@@ -166,7 +167,7 @@ const AddUser = () => {
                     </div>
                   </FloatingLabel>
                 </Col>
-                
+
                 <Col md={6} lg={6} xl={6}>
                   <FloatingLabel
                     controlId="floatingusername"
