@@ -10,9 +10,16 @@ const Sidebar = () => {
   const { activeMenu, setActiveMenu } = useContext(SidebarContext);
 
   return (
-    <div className={activeMenu ? "sidebar d-flex bg-dark hide" : "sidebar d-flex bg-dark"}>
+    <div
+      className={
+        activeMenu ? "sidebar d-flex bg-dark hide" : "sidebar d-flex bg-dark"
+      }
+    >
       <div className="d-flex flex-column flex-shrink-0 px-3 text-white w-100">
-        <a href="/" className="d-flex align-items-center pt-3 mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <a
+          href="/"
+          className="d-flex align-items-center pt-3 mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+        >
           <img alt="Sorted Rack" src={logo} width="140px" />
         </a>
 
@@ -24,7 +31,9 @@ const Sidebar = () => {
               <NavLink
                 end={true}
                 to="/"
-                className={({ isActive }) => `nav-link text-white ${isActive ? "active" : undefined}`}
+                className={({ isActive }) =>
+                  `nav-link text-white ${isActive ? "active" : undefined}`
+                }
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +51,9 @@ const Sidebar = () => {
             <li>
               <NavLink
                 to="/user"
-                className={({ isActive }) => `nav-link text-white ${isActive ? "active" : undefined}`}
+                className={({ isActive }) =>
+                  `nav-link text-white ${isActive ? "active" : undefined}`
+                }
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +71,9 @@ const Sidebar = () => {
             <li>
               <NavLink
                 to="/stock"
-                className={({ isActive }) => `nav-link text-white ${isActive ? "active" : undefined}`}
+                className={({ isActive }) =>
+                  `nav-link text-white ${isActive ? "active" : undefined}`
+                }
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +96,9 @@ const Sidebar = () => {
             <li>
               <NavLink
                 to="/assigned"
-                className={({ isActive }) => `nav-link text-white ${isActive ? "active" : undefined}`}
+                className={({ isActive }) =>
+                  `nav-link text-white ${isActive ? "active" : undefined}`
+                }
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -102,6 +117,27 @@ const Sidebar = () => {
                 <span>Assigned Devices</span>
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/ticket"
+                className={({ isActive }) =>
+                  `nav-link text-white ${isActive ? "active" : undefined}`
+                }
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-ticket-perforated pe-none me-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M4 4.85v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9z" />
+                  <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3zM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9z" />
+                </svg>
+                <span>Tickets</span>
+              </NavLink>
+            </li>
           </ul>
         </nav>
 
@@ -114,10 +150,19 @@ const Sidebar = () => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
+            <img
+              src="https://github.com/mdo.png"
+              alt=""
+              width="32"
+              height="32"
+              className="rounded-circle me-2"
+            />
             <strong>mdo</strong>
           </a>
-          <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+          <ul
+            className="dropdown-menu dropdown-menu-dark text-small shadow"
+            aria-labelledby="dropdownUser1"
+          >
             <li>
               <a className="dropdown-item" href="#">
                 New project...
