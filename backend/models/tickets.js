@@ -30,6 +30,11 @@ const ticketSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Please enter ticket details"],
     },
+    userId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      required: [true, "User id is required"],
+    },
   },
   { timestamps: true }
 );

@@ -11,7 +11,7 @@ const axiosSecure = axios.create({
 });
 
 const axiosOpen = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

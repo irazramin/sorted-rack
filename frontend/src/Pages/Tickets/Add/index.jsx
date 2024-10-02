@@ -5,6 +5,7 @@ import * as yup from "yup";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { axiosSecure } from "../../../api/axios";
+import { userHeader } from "../../../Utility/userHeader";
 const TicketAdd = () => {
   const schema = yup.object().shape({
     ticketName: yup.string().required("Ticket name is required"),
@@ -24,6 +25,7 @@ const TicketAdd = () => {
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
+      console.log(userHeader());
       await axiosSecure.post(
         `/ticket`,
         {
@@ -35,10 +37,7 @@ const TicketAdd = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${
-              localStorage.userDetails &&
-              JSON.parse(localStorage.userDetails).token
-            }`,
+            Authorization: userHeader(),
           },
         }
       );
