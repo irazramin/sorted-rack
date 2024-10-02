@@ -7,7 +7,7 @@ const Dashbaord = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await axiosSecure.get(`${BASE_URL}/product`, {
+      const response = await axiosSecure.get(`/product`, {
         headers: {
           Authorization: `Bearer ${
             localStorage.userDetails &&

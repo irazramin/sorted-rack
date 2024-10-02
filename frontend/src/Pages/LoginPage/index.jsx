@@ -10,7 +10,7 @@ import { BiErrorCircle } from "react-icons/bi";
 import { axiosOpen } from "../../api/axios";
 import logo from "../../assests/images/site-logo.png";
 import { BASE_URL } from "../../Utility/URL";
-const LOGIN_URL = `${BASE_URL}/auth/login`;
+const LOGIN_URL = `/auth/login`;
 
 const LoginForm = () => {
   const navigate = useNavigate();

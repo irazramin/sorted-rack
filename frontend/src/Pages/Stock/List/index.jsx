@@ -21,7 +21,7 @@ import { Toaster } from "../../../component/Toaster/Toaster";
 import { BASE_URL } from "../../../Utility/URL";
 
 const deleteStock = (stockItemId) =>
-  axiosSecure.delete(`${BASE_URL}/product/${stockItemId}`, {
+  axiosSecure.delete(`/product/${stockItemId}`, {
     headers: {
       Authorization: `Bearer ${
         localStorage.userDetails && JSON.parse(localStorage.userDetails).token
@@ -70,7 +70,7 @@ const ListStock = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: `${BASE_URL}/product`,
+      url: `/product`,
       requestConfig: [
         {
           headers: {
@@ -84,7 +84,7 @@ const ListStock = () => {
     });
 
   const getAllUsers = async () => {
-    const { data } = await axiosSecure.get(`${BASE_URL}/user`, {
+    const { data } = await axiosSecure.get(`/user`, {
       headers: {
         Authorization: `Bearer ${
           localStorage.userDetails && JSON.parse(localStorage.userDetails).token
@@ -111,7 +111,7 @@ const ListStock = () => {
 
     setShowLoader(true);
     await axiosSecure.post(
-      `${BASE_URL}/assignedProduct`,
+      `/assignedProduct`,
       {
         branch: "Goa",
         user: selectedUserId,

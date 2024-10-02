@@ -4,6 +4,7 @@ import { Button, Col, FloatingLabel, Form, Row } from "react-bootstrap";
 import * as yup from "yup";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { axiosSecure } from "../../../api/axios";
 const TicketAdd = () => {
   const schema = yup.object().shape({
     ticketName: yup.string().required("Ticket name is required"),
@@ -21,8 +22,29 @@ const TicketAdd = () => {
     ticketDetails: "",
   };
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log(values);
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      await axiosSecure.post(
+        `/ticket`,
+        {
+          ticketName: values.ticketName,
+          ticketCategory: values.ticketCategory,
+          ticketStatus: values.ticketStatus,
+          ticketPriority: values.ticketPriority,
+          ticketDetails: values.ticketDetails,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.userDetails &&
+              JSON.parse(localStorage.userDetails).token
+            }`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

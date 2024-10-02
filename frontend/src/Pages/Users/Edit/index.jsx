@@ -23,7 +23,7 @@ const EditUser = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: `${BASE_URL}/user/${id}`,
+      url: `/user/${id}`,
       requestConfig: [
         {
           headers: {

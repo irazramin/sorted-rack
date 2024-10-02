@@ -17,7 +17,7 @@ const AssignItem = () => {
   const [showToaster, setShowToaster] = useState(false);
 
   const getAssignedDeviceDetails = async () => {
-    const response = await axiosSecure.get(`${BASE_URL}/assignedProduct`, {
+    const response = await axiosSecure.get(`/assignedProduct`, {
       headers: {
         Authorization: `Bearer ${
           localStorage.userDetails && JSON.parse(localStorage.userDetails).token

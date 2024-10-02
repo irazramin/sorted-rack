@@ -26,6 +26,7 @@ const connDb = require("./db/connect");
 const authRoute = require("./routes/authRoute");
 const userRoute = require("./routes/userRote");
 const productRoute = require("./routes/productRoute");
+const ticketRouter = require("./routes/ticketRoute");
 const assignedProductRoute = require("./routes/assignedProductRoute");
 
 // middleware
@@ -60,6 +61,7 @@ app.use("/apiDocs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use("/api/st/auth", authRoute);
 app.use("/api/st/user", userRoute);
 app.use("/api/st/product", productRoute);
+app.use("/api/st/ticket", ticketRouter);
 app.use("/api/st/assignedProduct", assignedProductRoute);
 
 app.use(notFoundMiddleware);

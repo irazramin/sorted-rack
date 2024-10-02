@@ -22,7 +22,7 @@ const ListUser = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: `${BASE_URL}/user`,
+      url: `/user`,
       requestConfig: [
         {
           headers: {

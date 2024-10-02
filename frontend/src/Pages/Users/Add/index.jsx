@@ -23,7 +23,7 @@ const schema = yup.object().shape({
 
 const handleOnSubmit = (values) =>
   axiosSecure.post(
-    `${BASE_URL}/auth/register`,
+    `/auth/register`,
     {
       fname: values.firstName,
       lname: values.lastName,

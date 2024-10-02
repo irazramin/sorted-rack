@@ -50,7 +50,7 @@ const EditSystemDetails = () => {
     axiosFetch({
       axiosInstance: axiosSecure,
       method: "GET",
-      url: `${BASE_URL}/product/${id}`,
+      url: `/product/${id}`,
       requestConfig: [
         {
           headers: {
