@@ -1,18 +1,28 @@
-import { Formik } from "formik";
 import React from "react";
-import { Button, Col, FloatingLabel, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import * as yup from "yup";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { axiosSecure } from "../../../api/axios";
 import { userHeader } from "../../../Utility/userHeader";
+import InputField from "../../../component/Shared/Form/Input";
+import { Controller, useForm } from "react-hook-form";
+import SelectField from "../../../component/Shared/Form/Select";
+import { ticketStatus } from "../utils/ticketStatus";
+import { ticketPriorities } from "../utils/ticketPriorities";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Title from "../../../component/Shared/Title";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const TicketAdd = () => {
+  const navigate = useNavigate();
   const schema = yup.object().shape({
     ticketName: yup.string().required("Ticket name is required"),
     ticketCategory: yup.string().required("Ticket category is required"),
     ticketStatus: yup.string().required("Ticket status is required"),
     ticketPriority: yup.string().required("Ticket priority is required"),
-    ticketDetails: yup.string().required("Ticket details is required"),
+    ticketDetails: yup.string().required("Ticket details are required"),
   });
 
   const initialValues = {
@@ -23,10 +33,18 @@ const TicketAdd = () => {
     ticketDetails: "",
   };
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: initialValues,
+  });
+
+  const onSubmit = async (values) => {
     try {
-      console.log(userHeader());
-      await axiosSecure.post(
+      const res = await axiosSecure.post(
         `/ticket`,
         {
           ticketName: values.ticketName,
@@ -41,6 +59,11 @@ const TicketAdd = () => {
           },
         }
       );
+
+      if (res) {
+        toast.success("Ticket created successfully!");
+        navigate("/ticket");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -49,147 +72,81 @@ const TicketAdd = () => {
   return (
     <Row className="m-3">
       <Col xl={12}>
-        <h4 className="fs-5 mb-4">Ticket info</h4>
-        <hr />
+        <Title title="Create a new ticket" />
       </Col>
       <Row>
         <Col xl={12}>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={schema}
-            onSubmit={handleSubmit}
-          >
-            {({
-              handleSubmit,
-              errors,
-              values,
-              handleChange,
-              touched,
-              setFieldValue,
-            }) => (
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col xl={6}>
-                    <FloatingLabel className="mb-2" label="Ticket Name">
-                      <Form.Control
-                        type="text"
-                        name="ticketName"
-                        placeholder="Ticket Name"
-                        value={values.ticketName}
-                        onChange={handleChange}
-                        isInvalid={touched.ticketName && !!errors.ticketName}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.ticketName}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-                  </Col>
-                  <Col xl={6}>
-                    <FloatingLabel className="mb-3" label="Category">
-                      <Form.Select
-                        type="text"
-                        name="ticketCategory"
-                        value={values.ticketCategory}
-                        onChange={handleChange}
-                        isInvalid={
-                          !!touched.ticketCategory && !!errors.ticketCategory
-                        }
-                        aria-label="Default select example"
-                      >
-                        <option value="" disabled hidden>
-                          select
-                        </option>
-                        <option value="Mouse">Mouse</option>
-                        <option value="Monitor">Monitor</option>
-                        <option value="Headphone">Headphone</option>
-                        <option value="Keyboard">Keyboard</option>
-                        <option value="USBDongle">USB Dongle</option>
-                      </Form.Select>
-                      <div className="invalid-feedback">
-                        {touched.ticketCategory && errors.ticketCategory}
-                      </div>
-                    </FloatingLabel>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xl={6}>
-                    <FloatingLabel className="mb-3" label="Status">
-                      <Form.Select
-                        type="text"
-                        name="ticketStatus"
-                        value={values.ticketStatus}
-                        onChange={handleChange}
-                        isInvalid={
-                          !!touched.ticketStatus && !!errors.ticketStatus
-                        }
-                        aria-label="Default select example"
-                      >
-                        <option value="" disabled hidden>
-                          select
-                        </option>
-                        <option value="New Ticket">New Ticket</option>
-                        <option value="In progress">In progress</option>
-                        <option value="On hold">On hold</option>
-                        <option value="Close">Close</option>
-                        <option value="Resolve">Resolve</option>
-                      </Form.Select>
-                      <div className="invalid-feedback">
-                        {touched.ticketStatus && errors.ticketStatus}
-                      </div>
-                    </FloatingLabel>
-                  </Col>
-                  <Col xl={6}>
-                    <FloatingLabel className="mb-3" label="Priority">
-                      <Form.Select
-                        type="text"
-                        name="ticketPriority"
-                        value={values.ticketPriority}
-                        onChange={handleChange}
-                        isInvalid={
-                          !!touched.ticketPriority && !!errors.ticketPriority
-                        }
-                        aria-label="Default select example"
-                      >
-                        <option value="" disabled hidden>
-                          select
-                        </option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                      </Form.Select>
-                      <div className="invalid-feedback">
-                        {touched.ticketPriority && errors.ticketPriority}
-                      </div>
-                    </FloatingLabel>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xl={12}>
-                    <FloatingLabel className="mb-3" label="">
-                      <ReactQuill
-                        value={values.ticketDetails}
-                        placeholder="Describe your problems"
-                        onChange={(content) =>
-                          setFieldValue("ticketDetails", content)
-                        }
-                        style={{ height: "200px" }}
-                      />
-                      <div className="invalid-feedback">
-                        {touched.ticketDetails && errors.ticketDetails}
-                      </div>
-                    </FloatingLabel>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xl={12} className="mt-5">
-                    <Button style={{ width: "150px" }} type="submit">
-                      Submit
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            )}
-          </Formik>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row>
+              <Col xl={6}>
+                <InputField
+                  label="Ticket Name"
+                  control={control}
+                  name="ticketName"
+                  placeholder="Enter ticket name"
+                  error={errors.ticketName}
+                />
+              </Col>
+              <Col xl={6}>
+                <InputField
+                  label="Ticket Category"
+                  control={control}
+                  name="ticketCategory"
+                  placeholder="Enter category"
+                  error={errors.ticketCategory}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xl={6}>
+                <SelectField
+                  label="Ticket Status"
+                  control={control}
+                  name="ticketStatus"
+                  options={ticketStatus}
+                  error={errors.ticketStatus}
+                />
+              </Col>
+              <Col xl={6}>
+                <SelectField
+                  label="Ticket Priority"
+                  control={control}
+                  name="ticketPriority"
+                  options={ticketPriorities}
+                  error={errors.ticketPriority}
+                />
+              </Col>
+              <Col xl={6}></Col>
+            </Row>
+            <Row>
+              <Col xl={12}>
+                <Controller
+                  name="ticketDetails"
+                  control={control}
+                  render={({ field }) => (
+                    <ReactQuill
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Describe your problems"
+                      style={{ height: "200px" }}
+                    />
+                  )}
+                />
+                {errors.ticketDetails && (
+                  <div className="error-message">
+                    {errors.ticketDetails.message}
+                  </div>
+                )}
+              </Col>
+            </Row>
+            <Row>
+              <Col xl={12} className="mt-5">
+                <Button style={{ width: "150px" }} type="submit">
+                  Submit
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </Col>
       </Row>
     </Row>

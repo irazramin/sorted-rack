@@ -50,7 +50,7 @@ const AddUser = () => {
       <Formik
         validationSchema={schema}
         initialValues={{
-          firstName: "",
+          firstName: "Hifasd",
           lastName: "",
           email: "",
           password: "",

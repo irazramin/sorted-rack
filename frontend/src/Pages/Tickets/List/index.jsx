@@ -1,29 +1,71 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./ticketList.scss";
 import { axiosSecure } from "../../../api/axios";
 import useAxios from "../../../Hooks/useAxios";
 import { userHeader } from "../../../Utility/userHeader";
+import CustomModal from "../../../Common/Modal";
+import { toast } from "react-toastify";
+import CommentSidebar from "../../../Common/CommentSidebar";
+
 const TicketList = () => {
-  const [response, error, loading, axiosFetch] = useAxios();
+  // const [error, loading, axiosFetch] = useAxios();
+  const [show, setShow] = useState(false);
+  const [showCommentSidebar, setShowCommentSidebar] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState("");
+  const [tickets, setTickets] = useState([]);
+
   useEffect(() => {
     fetchUserDetails();
   }, []);
 
   const fetchUserDetails = async () => {
-    axiosFetch({
-      axiosInstance: axiosSecure,
-      method: "GET",
-      url: `/ticket`,
-      requestConfig: [
-        {
-          headers: {
-            Authorization: userHeader(),
-          },
-        },
-      ],
-    });
+    try {
+      const res = await axiosSecure.get("/ticket", {
+        headers: { Authorization: userHeader() },
+      });
+
+      console.log(res);
+
+      if (res) {
+        setTickets(res?.data?.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id) => {
+    setShow(true);
+    setSelectedTicket(id);
+  };
+
+  const deleteSingleTicket = async () => {
+    try {
+      const res = await axiosSecure.delete(`/ticket/${selectedTicket}`, {
+        headers: { Authorization: userHeader() },
+      });
+
+      if (res) {
+        setTickets((prevState) => {
+          const newTickets = prevState?.filter(
+            (ticket) => ticket?._id !== selectedTicket
+          );
+          return newTickets;
+        });
+
+        toast.success("Ticket deleted successfully!");
+        setShow(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCommentSectionShow = (id) => {
+    setShowCommentSidebar((prevState) => !prevState);
   };
 
   return (
@@ -51,52 +93,76 @@ const TicketList = () => {
             </tr>
           </thead>
           <tbody className="table-group-divider">
-            {response?.data?.map((ticket) => {
-              return (
-                <tr>
-                  <td>
-                    <span className="ticket-id">{ticket?._id}</span>
-                  </td>
-                  <td>{ticket?.ticketCategory}</td>
-                  <td className="priority">
-                    <span
-                      className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
-                    >
-                      {ticket?.ticketPriority}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className={`chip ${ticket?.ticketStatus
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-")}`}
-                    >
-                      {ticket?.ticketStatus}
-                    </span>
-                  </td>
-                  <td>{ticket?.createdAt}</td>
-                  <td className="action-wrapper">
-                    <Link to={`/ticket/edit/${ticket?._id}`}>
-                      <button className="edit table-action">
-                        <i class="bi bi-pencil"></i>
+            {Array.isArray(tickets) &&
+              tickets?.map((ticket) => {
+                return (
+                  <tr key={ticket?._id}>
+                    <td>
+                      <span className="ticket-id">{ticket?._id}</span>
+                    </td>
+                    <td>{ticket?.ticketCategory}</td>
+                    <td className="priority">
+                      <span
+                        className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+                      >
+                        {ticket?.ticketPriority}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`chip ${ticket?.ticketStatus
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-")}`}
+                      >
+                        {ticket?.ticketStatus}
+                      </span>
+                    </td>
+                    <td>{ticket?.createdAt}</td>
+                    <td className="action-wrapper">
+                      <Link to={`/ticket/edit/${ticket?._id}`}>
+                        <button className="edit table-action">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                      </Link>
+
+                      <button
+                        className="table-action delete"
+                        onClick={() => handleShow(ticket?._id)}
+                      >
+                        <i class="bi bi-trash"></i>
                       </button>
-                    </Link>
 
-                    <button className="table-action delete">
-                      <i class="bi bi-trash"></i>
-                    </button>
-
-                    <button className="table-action details">
-                      <i class="bi bi-eye-fill"></i>
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+                      <button
+                        className="table-action details"
+                        onClick={() => {
+                          handleCommentSectionShow(ticket?._id);
+                        }}
+                      >
+                        <i class="bi bi-eye-fill"></i>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </Table>
       </div>
+      <CustomModal
+        show={show}
+        handleClose={handleClose}
+        title="Are you sure?"
+        handleAction={deleteSingleTicket}
+        message="If you delete this ticket, I'll will be delete forever"
+      />
+      {showCommentSidebar && (
+        <div className="comment-sidebar-wrapper">
+          <CommentSidebar
+            setShowCommentSidebar={setShowCommentSidebar}
+            showCommentSidebar={showCommentSidebar}
+          />
+        </div>
+      )}
     </div>
   );
 };

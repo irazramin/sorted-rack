@@ -1,4 +1,5 @@
 const Tickets = require("../models/tickets");
+const user = require("../models/user");
 
 const createTicket = async (data) => {
   try {
@@ -10,7 +11,13 @@ const createTicket = async (data) => {
 
 const getAllTickets = async (query = {}) => {
   try {
-    return await Tickets.find(query);
+    return await Tickets.find(query).populate([
+      {
+        path: "userId",
+        select: "_id name email",
+        model: user,
+      },
+    ]);
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }

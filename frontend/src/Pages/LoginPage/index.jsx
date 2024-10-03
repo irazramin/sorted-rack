@@ -25,7 +25,6 @@ const LoginForm = () => {
   // const [userData, error, loading, axiosFetch] = useAxios();
 
   useEffect(() => {
-    console.log("called");
     if (userToken) {
       const decodedToken = jwt_decode(userToken);
       console.log("called", decodedToken, userToken);

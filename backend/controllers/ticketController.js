@@ -28,6 +28,7 @@ module.exports.createTicker = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
@@ -39,7 +40,9 @@ module.exports.getAllTickets = async (req, res) => {
     const { userId } = req.user;
     const user = await User.findById(userId);
 
-    const query = {};
+    const query = {
+      userId,
+    };
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 

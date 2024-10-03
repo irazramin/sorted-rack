@@ -10,7 +10,7 @@ const ticketSchema = new mongoose.Schema(
     ticketCategory: {
       type: String,
       trim: true,
-      enum: ["Mouse", "Monitor", "Headphone", "Keyboard", "USBDongle"],
+      // enum: ["Mouse", "Monitor", "Headphone", "Keyboard", "USBDongle"],
       required: [true, "Please select a ticket category"],
     },
     ticketStatus: {

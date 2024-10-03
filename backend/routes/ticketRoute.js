@@ -14,6 +14,6 @@ router.post("/", authenticateUser, createTicker);
 router.get("/", authenticateUser, getAllTickets);
 router.get("/:id", authenticateUser, findTicketById);
 router.put("/:id", authenticateUser, findTicketByIdAndUpdate);
-router.delete("/", authenticateUser, findTicketByIdAndDelete);
+router.delete("/:id", authenticateUser, findTicketByIdAndDelete);
 
 module.exports = router;
