@@ -5,9 +5,15 @@ const { authenticateUser } = require("../middleware/authentication");
 const {
   createTicker,
   getAllTickets,
+  findTicketById,
+  findTicketByIdAndUpdate,
+  findTicketByIdAndDelete,
 } = require("../controllers/ticketController");
 
 router.post("/", authenticateUser, createTicker);
 router.get("/", authenticateUser, getAllTickets);
+router.get("/:id", authenticateUser, findTicketById);
+router.put("/:id", authenticateUser, findTicketByIdAndUpdate);
+router.delete("/", authenticateUser, findTicketByIdAndDelete);
 
 module.exports = router;

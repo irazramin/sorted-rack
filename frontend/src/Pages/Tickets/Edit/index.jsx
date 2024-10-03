@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const Edit = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+const TicketEdit = () => {
+  return <div></div>;
+};
 
-export default Edit
+export default TicketEdit;

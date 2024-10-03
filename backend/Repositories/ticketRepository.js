@@ -8,9 +8,9 @@ const createTicket = async (data) => {
   }
 };
 
-const getAllTickets = async () => {
+const getAllTickets = async (query = {}) => {
   try {
-    return await Tickets.find({});
+    return await Tickets.find(query);
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }
@@ -24,4 +24,26 @@ const findTicketById = async (ticketId) => {
   }
 };
 
-module.exports = { createTicket, getAllTickets, findTicketById };
+const findTicketByIdAndUpdate = async (ticketId, data) => {
+  try {
+    return await Tickets.findByIdAndUpdate(ticketId, data, { new: true });
+  } catch (error) {
+    throw new Error("Ticket fetching failed: " + error.message);
+  }
+};
+
+const findTicketByIdAndDelete = async (ticketId) => {
+  try {
+    return await Tickets.findByIdAndDelete(ticketId);
+  } catch (error) {
+    throw new Error("Ticket deleting failed: " + error.message);
+  }
+};
+
+module.exports = {
+  createTicket,
+  getAllTickets,
+  findTicketById,
+  findTicketByIdAndUpdate,
+  findTicketByIdAndDelete,
+};

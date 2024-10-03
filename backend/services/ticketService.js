@@ -1,6 +1,6 @@
 const ticketRepository = require("../Repositories/ticketRepository");
 
-module.exports.createTicket = async (body) => {
+const createTicket = async (body) => {
   try {
     const data = await ticketRepository.createTicket(body);
     return data;
@@ -9,20 +9,46 @@ module.exports.createTicket = async (body) => {
   }
 };
 
-module.exports.getAllTickets = async () => {
+const getAllTickets = async (query = {}) => {
   try {
-    const data = await ticketRepository.getAllTickets();
+    const data = await ticketRepository.getAllTickets(query);
     return data;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }
 };
 
-module.exports.findTicketById = async (id) => {
+const findTicketById = async (id) => {
   try {
     const data = await ticketRepository.findTicketById(id);
     return data;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }
+};
+
+const findTicketByIdAndUpdate = async (id, data) => {
+  try {
+    const result = await ticketRepository.findTicketByIdAndUpdate(id, data);
+    return result;
+  } catch (error) {
+    throw new Error("Ticket updating failed: " + error.message);
+  }
+};
+
+const findTicketByIdAndDelete = async (id) => {
+  try {
+    const result = await ticketRepository.findTicketByIdAndDelete(id);
+    return result;
+  } catch (error) {
+    throw new Error("Ticket deleting failed: " + error.message);
+  }
+};
+
+module.exports = {
+  createTicket,
+  getAllTickets,
+  findTicketById,
+  findTicketByIdAndUpdate,
+  findTicketByIdAndDelete,
 };
