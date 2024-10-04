@@ -155,14 +155,19 @@ const TicketList = () => {
         handleAction={deleteSingleTicket}
         message="If you delete this ticket, I'll will be delete forever"
       />
-      {showCommentSidebar && (
-        <div className="comment-sidebar-wrapper">
-          <CommentSidebar
-            setShowCommentSidebar={setShowCommentSidebar}
-            showCommentSidebar={showCommentSidebar}
-          />
-        </div>
-      )}
+      {/* {showCommentSidebar && ( */}
+      <div
+        onClick={() => setShowCommentSidebar(false)}
+        className={`comment-sidebar-wrapper ${
+          showCommentSidebar ? "show" : ""
+        }`}
+      >
+        <CommentSidebar
+          setShowCommentSidebar={setShowCommentSidebar}
+          showCommentSidebar={showCommentSidebar}
+        />
+      </div>
+      {/* )} */}
     </div>
   );
 };

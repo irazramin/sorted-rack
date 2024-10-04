@@ -1,10 +1,10 @@
 import React from "react";
-
-const Title = ({ title }) => {
+import "./style.scss";
+const Title = ({ title, className = "", showDivider = true }) => {
   return (
     <>
-      <h4 className="fs-5 mb-3">{title}</h4>
-      <hr />
+      <h4 className={`fs-5 mb-3  ${className}`}>{title}</h4>
+      {showDivider && <hr />}
     </>
   );
 };
