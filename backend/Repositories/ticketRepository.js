@@ -1,5 +1,7 @@
 const Tickets = require("../models/tickets");
 const user = require("../models/user");
+const mongoose = require("mongoose");
+const { convert } = require("html-to-text");
 
 const createTicket = async (data) => {
   try {
@@ -14,7 +16,7 @@ const getAllTickets = async (query = {}) => {
     return await Tickets.find(query).populate([
       {
         path: "userId",
-        select: "_id name email",
+        select: "_id username email",
         model: user,
       },
     ]);
@@ -25,7 +27,37 @@ const getAllTickets = async (query = {}) => {
 
 const findTicketById = async (ticketId) => {
   try {
-    return await Tickets.findById(ticketId);
+    const ticketData = await Tickets.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(ticketId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userId",
+        },
+      },
+      {
+        $unwind: "$userId",
+      },
+
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "ticketId",
+          as: "comments",
+        },
+      },
+    ]);
+
+    // console.log();
+
+    return ticketData.length ? ticketData[0] : null;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }

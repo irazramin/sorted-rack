@@ -8,6 +8,7 @@ import { userHeader } from "../../../Utility/userHeader";
 import CustomModal from "../../../Common/Modal";
 import { toast } from "react-toastify";
 import CommentSidebar from "../../../Common/CommentSidebar";
+import { formatCreatedAt } from "../../../Utility/dateFormatter";
 
 const TicketList = () => {
   // const [error, loading, axiosFetch] = useAxios();
@@ -36,7 +37,10 @@ const TicketList = () => {
     }
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setSelectedTicket("");
+    setShow(false);
+  };
   const handleShow = (id) => {
     setShow(true);
     setSelectedTicket(id);
@@ -49,6 +53,7 @@ const TicketList = () => {
       });
 
       if (res) {
+        setSelectedTicket("");
         setTickets((prevState) => {
           const newTickets = prevState?.filter(
             (ticket) => ticket?._id !== selectedTicket
@@ -66,6 +71,7 @@ const TicketList = () => {
 
   const handleCommentSectionShow = (id) => {
     setShowCommentSidebar((prevState) => !prevState);
+    setSelectedTicket(id);
   };
 
   return (
@@ -118,7 +124,7 @@ const TicketList = () => {
                         {ticket?.ticketStatus}
                       </span>
                     </td>
-                    <td>{ticket?.createdAt}</td>
+                    <td>{formatCreatedAt(ticket?.createdAt)}</td>
                     <td className="action-wrapper">
                       <Link to={`/ticket/edit/${ticket?._id}`}>
                         <button className="edit table-action">
@@ -165,6 +171,7 @@ const TicketList = () => {
         <CommentSidebar
           setShowCommentSidebar={setShowCommentSidebar}
           showCommentSidebar={showCommentSidebar}
+          selectedTicket={selectedTicket}
         />
       </div>
       {/* )} */}

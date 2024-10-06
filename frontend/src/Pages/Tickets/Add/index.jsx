@@ -14,6 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Title from "../../../component/Shared/Title";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./style.scss";
 
 const TicketAdd = () => {
   const navigate = useNavigate();
@@ -70,11 +71,14 @@ const TicketAdd = () => {
   };
 
   return (
-    <Row className="m-3">
+    <Row className="wrapper">
       <Col xl={12}>
-        <Title title="Create a new ticket" />
+        <Title
+          title="Create a new ticket"
+          className="mt-2 mb-4 text-center fw-bold"
+        />
       </Col>
-      <Row>
+      <Row className="">
         <Col xl={12}>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Row>
@@ -119,28 +123,31 @@ const TicketAdd = () => {
               <Col xl={6}></Col>
             </Row>
             <Row>
-              <Col xl={12}>
+              <Col xl={12} className="position-relative">
                 <Controller
                   name="ticketDetails"
                   control={control}
                   render={({ field }) => (
                     <ReactQuill
-                      value={field.value}
+                      value={field.value.replace(/<[^>]+>/g, "")}
                       onChange={field.onChange}
                       placeholder="Describe your problems"
+                      className={`${
+                        errors.ticketDetails ? "border-danger" : ""
+                      }`}
                       style={{ height: "200px" }}
                     />
                   )}
                 />
                 {errors.ticketDetails && (
-                  <div className="error-message">
+                  <div className="error-message mt-5 text-danger position-absolute">
                     {errors.ticketDetails.message}
                   </div>
                 )}
               </Col>
             </Row>
-            <Row>
-              <Col xl={12} className="mt-5">
+            <Row className="mt-5">
+              <Col xl={12} className="mt-5 text-center">
                 <Button style={{ width: "150px" }} type="submit">
                   Submit
                 </Button>

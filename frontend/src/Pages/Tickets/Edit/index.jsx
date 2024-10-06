@@ -14,6 +14,7 @@ import { axiosSecure } from "../../../api/axios";
 import Title from "../../../component/Shared/Title";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./style.scss";
 
 const TicketEdit = () => {
   const { id } = useParams();
@@ -83,9 +84,12 @@ const TicketEdit = () => {
   };
 
   return (
-    <Row className="m-3">
+    <Row className="wrapper">
       <Col xl={12}>
-        <Title title="Edit your ticket" />
+        <Title
+          title="Create a new ticket"
+          className="mt-2 mb-4 text-center fw-bold"
+        />
       </Col>
       <Row>
         <Col xl={12}>
@@ -132,7 +136,7 @@ const TicketEdit = () => {
                 </Col>
               </Row>
               <Row>
-                <Col xl={12}>
+                <Col xl={12} className="position-relative">
                   <Controller
                     name="ticketDetails"
                     control={control}
@@ -141,19 +145,22 @@ const TicketEdit = () => {
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="Describe your problems"
+                        className={`${
+                          errors.ticketDetails ? "border-danger" : ""
+                        }`}
                         style={{ height: "200px" }}
                       />
                     )}
                   />
                   {errors.ticketDetails && (
-                    <div className="error-message">
+                    <div className="error-message mt-5 text-danger position-absolute">
                       {errors.ticketDetails.message}
                     </div>
                   )}
                 </Col>
               </Row>
-              <Row>
-                <Col xl={12} className="mt-5">
+              <Row className="mt-5">
+                <Col xl={12} className="mt-5 text-center">
                   <Button style={{ width: "150px" }} type="submit">
                     Submit
                   </Button>

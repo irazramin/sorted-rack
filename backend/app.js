@@ -27,6 +27,7 @@ const authRoute = require("./routes/authRoute");
 const userRoute = require("./routes/userRote");
 const productRoute = require("./routes/productRoute");
 const ticketRouter = require("./routes/ticketRoute");
+const commentRouter = require("./routes/commentRoute");
 const assignedProductRoute = require("./routes/assignedProductRoute");
 
 // middleware
@@ -62,6 +63,7 @@ app.use("/api/st/auth", authRoute);
 app.use("/api/st/user", userRoute);
 app.use("/api/st/product", productRoute);
 app.use("/api/st/ticket", ticketRouter);
+app.use("/api/st/comment", commentRouter);
 app.use("/api/st/assignedProduct", assignedProductRoute);
 
 app.use(notFoundMiddleware);

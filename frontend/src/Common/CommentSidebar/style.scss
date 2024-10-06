@@ -4,11 +4,13 @@
   right: 0;
   top: 54px;
   min-width: 550px;
+  max-width: 550px;
   transform: translateX(550px);
   transition: all 0.2s ease-in;
   background-color: #fff;
   z-index: 9999 !important;
   box-shadow: 1px 8px 32px rgba($color: #000000, $alpha: 0.5);
+  overflow-y: auto;
 
   &.show {
     transform: translateX(0px);
@@ -16,7 +18,7 @@
 
   .close-btn {
     position: absolute;
-    left: -80px;
+    right: 10px;
     top: 10px;
     background-color: #fff;
     width: 45px;
@@ -29,6 +31,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 8px rgba($color: #000000, $alpha: 0.5);
   }
 
   .top-section {
@@ -42,9 +45,30 @@
       flex-direction: column;
 
       .created-by {
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 13px;
+        font-weight: 400;
         color: #999;
+      }
+    }
+  }
+
+  .body-section {
+    padding: 0 20px;
+
+    .comment-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .comment-box-readonly {
+      padding: 8px 12px;
+      border-radius: 6px;
+      width: 80%;
+      border: 1px solid rgb(74, 144, 226, 0.4);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      &:hover {
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
       }
     }
   }
