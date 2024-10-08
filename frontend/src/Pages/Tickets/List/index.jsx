@@ -122,7 +122,7 @@ const TicketList = () => {
           <button className="common-button">Create Ticket</button>
         </Link>
       </div>
-      <div className="table-wrapper" style={{ height: "70vh" }}>
+      <div className="table-wrapper">
         <div className="filter-section">
           <div className="d-flex align-items-center justify-content-between gap-2">
             <div className="filter-select">
@@ -201,93 +201,106 @@ const TicketList = () => {
             </form>
           </div>
         </div>
-        <table className="table mt-3">
-          <thead>
-            <tr className="bg-light">
-              <th scope="col">TicketId</th>
-              <th scope="col">Category</th>
-              <th scope="col">Priority</th>
-              <th scope="col">Status</th>
-              <th scope="col">Created</th>
-              <th scope="col" className="text-center">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(tickets) &&
-              tickets?.map((ticket) => {
-                return (
-                  <tr key={ticket?._id}>
-                    <td>
-                      <span className="ticket-id">{ticket?._id}</span>
-                    </td>
-                    <td>{ticket?.ticketCategory}</td>
-                    <td className="priority">
-                      <span
-                        className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
-                      >
-                        {ticket?.ticketPriority}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`chip ${ticket?.ticketStatus
-                          .toLowerCase()
-                          .split(" ")
-                          .join("-")}`}
-                      >
-                        {ticket?.ticketStatus}
-                      </span>
-                    </td>
-                    <td>{formatCreatedAt(ticket?.createdAt)}</td>
-                    <td className="action-wrapper">
-                      {/* <Link to={`/ticket/edit/${ticket?._id}`}>
+        <div className="user-table">
+          <table className="table mt-3 table-responsive">
+            <thead>
+              <tr className="bg-light">
+                <th scope="col">TicketId</th>
+                <th scope="col">Category</th>
+                <th scope="col">Branch</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Status</th>
+                <th scope="col">Comments</th>
+                <th scope="col">Created</th>
+                <th scope="col" className="text-center">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(tickets) &&
+                tickets?.map((ticket) => {
+                  return (
+                    <tr key={ticket?._id}>
+                      <td>
+                        <span className="ticket-id">
+                          {ticket?._id.slice(0, 5)}
+                        </span>
+                      </td>
+                      <td>{ticket?.ticketCategory}</td>
+                      <td>{ticket?.userId?.branch}</td>
+                      <td className="priority">
+                        <span
+                          className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+                        >
+                          {ticket?.ticketPriority}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`chip ${ticket?.ticketStatus
+                            .toLowerCase()
+                            .split(" ")
+                            .join("-")}`}
+                        >
+                          {ticket?.ticketStatus}
+                        </span>
+                      </td>
+                      <td className="d-flex align-items-center justify-content-center gap-2">
+                        <span>
+                          <i class="bi bi-chat-left-text"></i>
+                        </span>
+                        {ticket?.commentCount}
+                      </td>
+                      <td>{formatCreatedAt(ticket?.createdAt)}</td>
+                      <td className="action-wrapper">
+                        {/* <Link to={`/ticket/edit/${ticket?._id}`}>
                        
                       </Link> */}
 
-                      {ticket?.ticketStatus === "New ticket" && (
-                        <>
-                          <button
-                            className="edit table-action"
-                            onClick={() => {
-                              if (ticket?.ticketStatus !== "New ticket") {
-                                toast.error("Admin already working on");
-                              } else {
-                                navigate(`/ticket/edit/${ticket?._id}`);
-                              }
-                            }}
-                          >
-                            <i class="bi bi-pencil"></i>
-                          </button>
-                          <button
-                            className="table-action delete"
-                            onClick={() => {
-                              if (ticket?.ticketStatus !== "New ticket") {
-                                toast.error("Admin already working on");
-                              } else {
-                                handleShow(ticket?._id);
-                              }
-                            }}
-                          >
-                            <i class="bi bi-trash"></i>
-                          </button>
-                        </>
-                      )}
-                      <button
-                        className="table-action details"
-                        onClick={() => {
-                          handleCommentSectionShow(ticket?._id);
-                        }}
-                      >
-                        <i class="bi bi-eye-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+                        {ticket?.ticketStatus === "New ticket" && (
+                          <>
+                            <button
+                              className="edit table-action"
+                              onClick={() => {
+                                if (ticket?.ticketStatus !== "New ticket") {
+                                  toast.error("Admin already working on");
+                                } else {
+                                  navigate(`/ticket/edit/${ticket?._id}`);
+                                }
+                              }}
+                            >
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                            <button
+                              className="table-action delete"
+                              onClick={() => {
+                                if (ticket?.ticketStatus !== "New ticket") {
+                                  toast.error("Admin already working on");
+                                } else {
+                                  handleShow(ticket?._id);
+                                }
+                              }}
+                            >
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </>
+                        )}
+                        <button
+                          className="table-action details"
+                          onClick={() => {
+                            handleCommentSectionShow(ticket?._id);
+                          }}
+                        >
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
       </div>
       <CustomModal
         show={show}

@@ -18,10 +18,13 @@ const getAllTickets = async (query = {}) => {
         const commentsDocuments = await Comments.countDocuments({
           ticketId: ticket?._id,
         });
-        ticket.commentCount = commentsDocuments;
-        return ticket;
+        const plainTicket = ticket.toObject();
+        plainTicket.commentCount = commentsDocuments;
+        console.log(ticket);
+        return plainTicket;
       })
     );
+
     return data;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);

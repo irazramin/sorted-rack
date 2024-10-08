@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./style.scss";
 import TextAreaField from "../../../component/Shared/Form/TextArea";
+import { ticketCategories } from "../utils/ticketCategories";
 
 const TicketEdit = () => {
   const { id } = useParams();
@@ -85,105 +86,72 @@ const TicketEdit = () => {
   };
 
   return (
-    <Row className="wrapper">
-      <Col xl={12}>
-        <Title
-          title="Create a new ticket"
-          className="mt-2 mb-4 text-center fw-bold"
-        />
-      </Col>
-      <Row>
+    <div className="edit-ticket">
+      <Row className="wrapper">
         <Col xl={12}>
-          {ticket ? (
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Row>
-                <Col xl={6}>
-                  <InputField
-                    label="Ticket Name"
-                    control={control}
-                    name="ticketName"
-                    placeholder="Enter ticket name"
-                    error={errors.ticketName}
-                  />
-                </Col>
-                <Col xl={6}>
-                  <InputField
-                    label="Ticket Category"
-                    control={control}
-                    name="ticketCategory"
-                    placeholder="Enter category"
-                    error={errors.ticketCategory}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col xl={6}>
-                  <SelectField
-                    label="Ticket Status"
-                    control={control}
-                    name="ticketStatus"
-                    options={ticketStatus}
-                    error={errors.ticketStatus}
-                  />
-                </Col>
-                <Col xl={6}>
-                  <SelectField
-                    label="Ticket Priority"
-                    control={control}
-                    name="ticketPriority"
-                    options={ticketPriorities}
-                    error={errors.ticketPriority}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                {/* <Col xl={12} className="position-relative">
-                  <Controller
-                    name="ticketDetails"
-                    control={control}
-                    render={({ field }) => (
-                      <ReactQuill
-                        value={field.value}
-                        onChange={field.onChange}
-                        placeholder="Describe your problems"
-                        className={`${
-                          errors.ticketDetails ? "border-danger" : ""
-                        }`}
-                        style={{ height: "200px" }}
-                      />
-                    )}
-                  />
-                  {errors.ticketDetails && (
-                    <div className="error-message mt-5 text-danger position-absolute">
-                      {errors.ticketDetails.message}
-                    </div>
-                  )}
-                </Col> */}
-                <Col xl={12}>
-                  <TextAreaField
-                    label="Ticket Details"
-                    control={control}
-                    name="ticketDetails"
-                    error={errors.ticketDetails}
-                    cols={10}
-                    rows={10}
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-1">
-                <Col xl={12} className="text-center">
-                  <Button style={{ width: "150px" }} type="submit">
-                    Submit
-                  </Button>
-                </Col>
-              </Row>
-            </form>
-          ) : (
-            <p>Loading...</p>
-          )}
+          <Title
+            title="Create a new ticket"
+            className="mt-2 mb-4 text-center fw-bold"
+          />
         </Col>
+        {ticket ? (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Row>
+              <Col xl={12}>
+                <InputField
+                  label="Ticket Name"
+                  control={control}
+                  name="ticketName"
+                  placeholder="Enter ticket name"
+                  error={errors.ticketName}
+                />
+              </Col>
+              <Col xl={12}>
+                <SelectField
+                  label="Ticket Category"
+                  control={control}
+                  name="ticketCategory"
+                  options={ticketCategories}
+                  error={errors.ticketCategory}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xl={12}>
+                <SelectField
+                  label="Ticket Priority"
+                  control={control}
+                  name="ticketPriority"
+                  options={ticketPriorities}
+                  error={errors.ticketPriority}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xl={12}>
+                <TextAreaField
+                  label="Ticket Details"
+                  control={control}
+                  name="ticketDetails"
+                  error={errors.ticketDetails}
+                  cols={10}
+                  rows={10}
+                />
+              </Col>
+            </Row>
+            <Row className="mt-1">
+              <Col xl={12} className="text-center">
+                <Button style={{ width: "150px" }} type="submit">
+                  Submit
+                </Button>
+              </Col>
+            </Row>
+          </form>
+        ) : (
+          <p>Loading...</p>
+        )}
       </Row>
-    </Row>
+    </div>
   );
 };
 

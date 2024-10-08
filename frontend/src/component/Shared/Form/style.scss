@@ -1,11 +1,43 @@
 .input-field,
 .select-field {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
 
   label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  .custom-select {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-select select {
+    width: 100%;
+    padding: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .custom-select::after {
+    content: "▼";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 14px;
     color: #333;
   }
 
@@ -13,11 +45,11 @@
   select,
   textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     &:focus {
       outline: none;
@@ -45,7 +77,6 @@
     .error-message {
       color: #e74c3c;
       font-size: 0.875rem;
-      margin-top: 0.25rem;
     }
   }
 }

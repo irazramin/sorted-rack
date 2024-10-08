@@ -16,7 +16,7 @@ const getAllTickets = async (query = {}) => {
     return await Tickets.find(query).populate([
       {
         path: "userId",
-        select: "_id username email",
+        select: "_id username email branch",
         model: user,
       },
     ]);

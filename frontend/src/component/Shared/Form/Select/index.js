@@ -9,14 +9,16 @@ const SelectField = ({ control, name, label, options, error }) => {
         control={control}
         name={name}
         render={({ field }) => (
-          <select {...field}>
-            <option value="">Select an option</option>
-            {options?.map((option) => (
-              <option key={option?.value} value={option?.value}>
-                {option?.label}
-              </option>
-            ))}
-          </select>
+          <div class="custom-select">
+            <select {...field}>
+              <option value="">Select an option</option>
+              {options?.map((option) => (
+                <option key={option?.value} value={option?.value}>
+                  {option?.label}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
       />
       {error && <div className="error-message">{error.message}</div>}

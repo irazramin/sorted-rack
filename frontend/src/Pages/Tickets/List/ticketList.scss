@@ -1,21 +1,22 @@
 .ticket-list {
   background-color: #f1f5fc;
   height: 100%;
-
+  // overflow-y: auto;
   .title-bar {
     background-color: #fff;
     padding: 10px 15px;
-    margin-bottom: 30px;
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    margin-bottom: 25px;
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
     border-radius: 8px;
   }
 
   .table-wrapper {
-    padding: 10px 15px;
+    padding: 15px;
     background-color: #fff;
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
     border-radius: 8px;
-
+    min-height: 77vh;
+    max-height: 77vh;
     .filter-section {
       display: flex;
       align-items: center;
@@ -27,7 +28,7 @@
         background: #f8f8f8;
         border: 1px solid #e2e2e2;
         border-radius: 3px;
-        padding: 3px 8px;
+        padding: 5px 8px;
         outline: none;
         font-size: 13px;
       }
@@ -39,12 +40,22 @@
   }
 }
 
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+td,
+th {
+  word-wrap: break-word;
+}
+
 tr {
   background-color: #fff !important;
 }
 
 td {
-  padding: 20px !important;
+  padding: 15px !important;
 }
 
 .chip {
