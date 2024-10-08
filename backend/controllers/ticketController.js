@@ -56,7 +56,44 @@ module.exports.getAllTickets = async (req, res) => {
   }
 };
 
+module.exports.getAllTicketsForAdmin = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+
+    const query = {};
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const response = await ticketService.getAllTickets(query);
+
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+};
+
 module.exports.findTicketById = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const response = await ticketService.findTicketById(id);
+
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+};
+
+module.exports.findTicketByIdForAdmin = async (req, res) => {
   try {
     const { userId } = req.user;
     const { id } = req.params;
@@ -120,6 +157,30 @@ module.exports.findTicketByIdAndDelete = async (req, res) => {
     if (!ticket) throw new CustomError.NotFoundError("Ticket not found!");
 
     const response = await ticketService.findTicketByIdAndDelete(id);
+
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+};
+
+module.exports.changeTicketStatus = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const { ticketStatus } = req.body;
+
+    const user = await User.findById(userId);
+    const ticket = await ticketService.findTicketById(id);
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+    if (!ticket) throw new CustomError.NotFoundError("Ticket not found!");
+
+    const response = await ticketService.changeTicketStatus(id, {
+      ticketStatus,
+    });
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {

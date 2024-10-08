@@ -16,6 +16,8 @@ const TicketList = () => {
   const [showCommentSidebar, setShowCommentSidebar] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState("");
   const [tickets, setTickets] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [ticket, setTicket] = useState({});
 
   useEffect(() => {
     fetchUserDetails();
@@ -73,6 +75,24 @@ const TicketList = () => {
     setShowCommentSidebar((prevState) => !prevState);
     setSelectedTicket(id);
   };
+
+  const fetchingSingleTicket = async () => {
+    try {
+      const response = await axiosSecure.get(`/ticket/${selectedTicket}`, {
+        headers: {
+          Authorization: userHeader(),
+        },
+      });
+      setComments(response?.data?.data?.comments);
+      setTicket(response?.data?.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchingSingleTicket();
+  }, [selectedTicket]);
 
   return (
     <div className="flex-grow-1 mt-3 h-100 w-100 px-4">
@@ -172,6 +192,10 @@ const TicketList = () => {
           setShowCommentSidebar={setShowCommentSidebar}
           showCommentSidebar={showCommentSidebar}
           selectedTicket={selectedTicket}
+          comments={comments}
+          setComments={setComments}
+          setTicket={setTicket}
+          ticket={ticket}
         />
       </div>
       {/* )} */}

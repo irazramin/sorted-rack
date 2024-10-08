@@ -16,9 +16,11 @@ const CommentSidebar = ({
   showCommentSidebar,
   setShowCommentSidebar,
   selectedTicket,
+  comments,
+  setComments,
+  ticket,
+  setTicket,
 }) => {
-  const [ticket, setTicket] = useState({});
-  const [comments, setComments] = useState([]);
   const [showCommentSection, setShowCommentSection] = useState(false);
 
   const initialValues = {
@@ -29,24 +31,6 @@ const CommentSidebar = ({
   });
 
   const commentValue = watch("comment");
-
-  const fetchingSingleTicket = async () => {
-    try {
-      const response = await axiosSecure.get(`/ticket/${selectedTicket}`, {
-        headers: {
-          Authorization: userHeader(),
-        },
-      });
-      setComments(response?.data?.data?.comments);
-      setTicket(response?.data?.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchingSingleTicket();
-  }, [selectedTicket]);
 
   const onSubmit = async (value) => {
     try {

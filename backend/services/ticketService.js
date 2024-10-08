@@ -18,6 +18,15 @@ const getAllTickets = async (query = {}) => {
   }
 };
 
+const getAllTicketsForAdmin = async (query = {}) => {
+  try {
+    const data = await ticketRepository.getAllTicketsForAdmin(query);
+    return data;
+  } catch (error) {
+    throw new Error("Ticket fetching failed: " + error.message);
+  }
+};
+
 const findTicketById = async (id) => {
   try {
     const data = await ticketRepository.findTicketById(id);
@@ -45,10 +54,21 @@ const findTicketByIdAndDelete = async (id) => {
   }
 };
 
+const changeTicketStatus = async (id, status) => {
+  try {
+    const result = await ticketRepository.changeTicketStatus(id, status);
+    return result;
+  } catch (error) {
+    throw new Error("Ticket updating failed: " + error.message);
+  }
+};
+
 module.exports = {
   createTicket,
   getAllTickets,
   findTicketById,
   findTicketByIdAndUpdate,
   findTicketByIdAndDelete,
+  getAllTicketsForAdmin,
+  changeTicketStatus,
 };

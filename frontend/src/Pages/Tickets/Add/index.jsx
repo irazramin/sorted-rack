@@ -15,6 +15,7 @@ import Title from "../../../component/Shared/Title";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./style.scss";
+import TextAreaField from "../../../component/Shared/Form/TextArea";
 
 const TicketAdd = () => {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ const TicketAdd = () => {
               <Col xl={6}></Col>
             </Row>
             <Row>
-              <Col xl={12} className="position-relative">
+              {/* <Col xl={12} className="position-relative">
                 <Controller
                   name="ticketDetails"
                   control={control}
@@ -144,10 +145,20 @@ const TicketAdd = () => {
                     {errors.ticketDetails.message}
                   </div>
                 )}
+              </Col> */}
+              <Col xl={12}>
+                <TextAreaField
+                  label="Ticket Details"
+                  control={control}
+                  name="ticketDetails"
+                  error={errors.ticketDetails}
+                  cols={10}
+                  rows={10}
+                />
               </Col>
             </Row>
-            <Row className="mt-5">
-              <Col xl={12} className="mt-5 text-center">
+            <Row className="mt-1">
+              <Col xl={12} className="text-center">
                 <Button style={{ width: "150px" }} type="submit">
                   Submit
                 </Button>

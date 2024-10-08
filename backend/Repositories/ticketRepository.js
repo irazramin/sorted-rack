@@ -25,6 +25,20 @@ const getAllTickets = async (query = {}) => {
   }
 };
 
+const getAllTicketsForAdmin = async (query = {}) => {
+  try {
+    return await Tickets.find(query).populate([
+      {
+        path: "userId",
+        select: "_id username email",
+        model: user,
+      },
+    ]);
+  } catch (error) {
+    throw new Error("Ticket fetching failed: " + error.message);
+  }
+};
+
 const findTicketById = async (ticketId) => {
   try {
     const ticketData = await Tickets.aggregate([
@@ -79,10 +93,28 @@ const findTicketByIdAndDelete = async (ticketId) => {
   }
 };
 
+const changeTicketStatus = async (id, status) => {
+  try {
+    return await Tickets.findByIdAndUpdate(
+      id,
+      {
+        ticketStatus: status,
+      },
+      {
+        new: true,
+      }
+    );
+  } catch (error) {
+    throw new Error("Ticket updating failed: " + error.message);
+  }
+};
+
 module.exports = {
   createTicket,
   getAllTickets,
   findTicketById,
   findTicketByIdAndUpdate,
   findTicketByIdAndDelete,
+  getAllTicketsForAdmin,
+  changeTicketStatus,
 };
