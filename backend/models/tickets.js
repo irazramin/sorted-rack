@@ -16,7 +16,7 @@ const ticketSchema = new mongoose.Schema(
     ticketStatus: {
       type: String,
       trim: true,
-      enum: ["New Ticket", "In progress", "On hold", "Close", "Resolve"],
+      enum: ["New ticket", "In progress", "On hold", "Close", "Resolve"],
       required: [true, "Please select a ticket status"],
     },
     ticketPriority: {

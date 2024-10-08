@@ -1,5 +1,5 @@
 const ticketRepository = require("../Repositories/ticketRepository");
-
+const Comments = require("../models/comment");
 const createTicket = async (body) => {
   try {
     const data = await ticketRepository.createTicket(body);
@@ -11,7 +11,17 @@ const createTicket = async (body) => {
 
 const getAllTickets = async (query = {}) => {
   try {
-    const data = await ticketRepository.getAllTickets(query);
+    let data = await ticketRepository.getAllTickets(query);
+
+    data = await Promise.all(
+      data?.map(async (ticket) => {
+        const commentsDocuments = await Comments.countDocuments({
+          ticketId: ticket?._id,
+        });
+        ticket.commentCount = commentsDocuments;
+        return ticket;
+      })
+    );
     return data;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);

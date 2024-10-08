@@ -3,15 +3,12 @@
   left: 10px;
 }
 
-.title-bar {
-  border: 1px solid #d8d8d8;
+tr {
+  border-bottom: 1px solid #d8d8d8;
 }
 
-table,
-th,
-tr,
-td {
-  border: 1px solid #d8d8d8;
+table {
+  border: none;
 }
 
 .form-control {
@@ -26,4 +23,67 @@ td {
 
 .green {
   color: green;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  width: 100%;
+  .dropdown {
+    background-color: #fff;
+    border: 1px solid #d8d8d8;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    position: absolute;
+    width: 77%;
+    z-index: 99999999 !important;
+
+    p {
+      padding: 3px 5px;
+      border-bottom: 1px solid #d8d8d86b;
+      margin: 0;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      &:hover {
+        background-color: #d8d8d8;
+      }
+    }
+  }
+}
+
+.dropd {
+  font-size: 14px;
+  &.high {
+    background-color: #f40b0b;
+  }
+  &.medium {
+    background-color: #178c08;
+  }
+  &.low {
+    background-color: #dfd811;
+  }
+  &.new-ticket {
+    background-color: #6c757d;
+  }
+  &.in-progress {
+    background-color: #3ec9d6;
+  }
+  &.on-hold {
+    background-color: #ffa21d;
+  }
+  &.close {
+    background-color: #39b526;
+  }
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  select,
+  input {
+    background-color: white;
+    border: 1px solid #d8d8d8;
+    padding: 3px;
+    border-radius: 5px;
+  }
 }

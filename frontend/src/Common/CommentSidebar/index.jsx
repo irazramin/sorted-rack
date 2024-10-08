@@ -22,7 +22,6 @@ const CommentSidebar = ({
   setTicket,
 }) => {
   const [showCommentSection, setShowCommentSection] = useState(false);
-
   const initialValues = {
     comment: "",
   };

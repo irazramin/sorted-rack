@@ -25,7 +25,7 @@ router.get(
   findTicketByIdForAdmin
 );
 
-router.get(
+router.put(
   "/:id/change-status",
   authenticateUser,
   authorizeRoles("superadmin", "admin"),

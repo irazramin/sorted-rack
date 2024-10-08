@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./ticketList.scss";
 import { axiosSecure } from "../../../api/axios";
 import useAxios from "../../../Hooks/useAxios";
@@ -9,6 +9,10 @@ import CustomModal from "../../../Common/Modal";
 import { toast } from "react-toastify";
 import CommentSidebar from "../../../Common/CommentSidebar";
 import { formatCreatedAt } from "../../../Utility/dateFormatter";
+import Title from "../../../component/Shared/Title";
+import { ticketCategories } from "../utils/ticketCategories";
+import { ticketStatus } from "../utils/ticketStatus";
+import { ticketPriorities } from "../utils/ticketPriorities";
 
 const TicketList = () => {
   // const [error, loading, axiosFetch] = useAxios();
@@ -18,16 +22,25 @@ const TicketList = () => {
   const [tickets, setTickets] = useState([]);
   const [comments, setComments] = useState([]);
   const [ticket, setTicket] = useState({});
-
+  const navigate = useNavigate();
+  const [query, setQuery] = useState({
+    category: "",
+    priority: "",
+    status: "",
+    search: "",
+  });
   useEffect(() => {
     fetchUserDetails();
-  }, []);
+  }, [query]);
 
   const fetchUserDetails = async () => {
     try {
-      const res = await axiosSecure.get("/ticket", {
-        headers: { Authorization: userHeader() },
-      });
+      const res = await axiosSecure.get(
+        `/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}`,
+        {
+          headers: { Authorization: userHeader() },
+        }
+      );
 
       console.log(res);
 
@@ -94,31 +107,114 @@ const TicketList = () => {
     fetchingSingleTicket();
   }, [selectedTicket]);
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setQuery((prevState) => ({
+      ...prevState,
+      search: e.target.search.value,
+    }));
+  };
   return (
-    <div className="flex-grow-1 mt-3 h-100 w-100 px-4">
-      <div className="row">
-        <div className="col-6">
-          <h3>All Tickets</h3>
-        </div>
-        <div className="col-6 d-flex justify-content-end">
-          <Link to="/ticket/create">
-            <Button variant="primary mb-2 float-right">Create Ticket</Button>
-          </Link>
-        </div>
+    <div className="p-4 ticket-list">
+      <div className="title-bar d-flex align-items-center justify-content-between">
+        <Title title="All Tickets" className="m-0" />
+        <Link to="/ticket/create">
+          <button className="common-button">Create Ticket</button>
+        </Link>
       </div>
-      <div className="ticket-table">
-        <Table striped hover>
+      <div className="table-wrapper" style={{ height: "70vh" }}>
+        <div className="filter-section">
+          <div className="d-flex align-items-center justify-content-between gap-2">
+            <div className="filter-select">
+              <select
+                name="category"
+                id="category"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    category: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a category
+                </option>
+                {ticketCategories?.map((category) => (
+                  <option value={category.value}>{category.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-select">
+              <select
+                name="status"
+                id="status"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    status: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a status
+                </option>
+                {ticketStatus?.map((status) => (
+                  <option value={status.value}>{status.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-select">
+              <select
+                name="priority"
+                id="priority"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    priority: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a priority
+                </option>
+                {ticketPriorities?.map((priority) => (
+                  <option value={priority.value}>{priority.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="filter-search">
+            <form
+              className=" d-flex align-items-center justify-content-between gap-2"
+              action="#"
+              onSubmit={handleSearchSubmit}
+            >
+              <input
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search.."
+              />
+              <button type="submit" className="common-button-square">
+                <i class="bi bi-search"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        <table className="table mt-3">
           <thead>
-            <tr>
-              <th>TicketId</th>
-              <th>Category</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th className="text-center">Action</th>
+            <tr className="bg-light">
+              <th scope="col">TicketId</th>
+              <th scope="col">Category</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Status</th>
+              <th scope="col">Created</th>
+              <th scope="col" className="text-center">
+                Action
+              </th>
             </tr>
           </thead>
-          <tbody className="table-group-divider">
+          <tbody>
             {Array.isArray(tickets) &&
               tickets?.map((ticket) => {
                 return (
@@ -146,19 +242,38 @@ const TicketList = () => {
                     </td>
                     <td>{formatCreatedAt(ticket?.createdAt)}</td>
                     <td className="action-wrapper">
-                      <Link to={`/ticket/edit/${ticket?._id}`}>
-                        <button className="edit table-action">
-                          <i class="bi bi-pencil"></i>
-                        </button>
-                      </Link>
+                      {/* <Link to={`/ticket/edit/${ticket?._id}`}>
+                       
+                      </Link> */}
 
-                      <button
-                        className="table-action delete"
-                        onClick={() => handleShow(ticket?._id)}
-                      >
-                        <i class="bi bi-trash"></i>
-                      </button>
-
+                      {ticket?.ticketStatus === "New ticket" && (
+                        <>
+                          <button
+                            className="edit table-action"
+                            onClick={() => {
+                              if (ticket?.ticketStatus !== "New ticket") {
+                                toast.error("Admin already working on");
+                              } else {
+                                navigate(`/ticket/edit/${ticket?._id}`);
+                              }
+                            }}
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            className="table-action delete"
+                            onClick={() => {
+                              if (ticket?.ticketStatus !== "New ticket") {
+                                toast.error("Admin already working on");
+                              } else {
+                                handleShow(ticket?._id);
+                              }
+                            }}
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </>
+                      )}
                       <button
                         className="table-action details"
                         onClick={() => {
@@ -172,7 +287,7 @@ const TicketList = () => {
                 );
               })}
           </tbody>
-        </Table>
+        </table>
       </div>
       <CustomModal
         show={show}

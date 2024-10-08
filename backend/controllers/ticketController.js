@@ -6,6 +6,7 @@ const ticketService = require("../services/ticketService");
 module.exports.createTicker = async (req, res) => {
   try {
     const { userId } = req.user;
+
     const {
       ticketName,
       ticketCategory,
@@ -39,10 +40,29 @@ module.exports.getAllTickets = async (req, res) => {
   try {
     const { userId } = req.user;
     const user = await User.findById(userId);
+    const { category, status, priority, search } = req.query;
 
     const query = {
       userId,
     };
+
+    if (search) {
+      query.ticketName = { $regex: new RegExp(search, "i") };
+    }
+
+    if (category) {
+      query.ticketCategory = category;
+    }
+
+    if (priority) {
+      query.ticketPriority = priority;
+    }
+
+    if (status) {
+      query.ticketStatus = status;
+    }
+
+    console.log(query);
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 
@@ -50,6 +70,7 @@ module.exports.getAllTickets = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
@@ -172,18 +193,19 @@ module.exports.changeTicketStatus = async (req, res) => {
     const { id } = req.params;
     const { ticketStatus } = req.body;
 
+    console.log(ticketStatus);
+
     const user = await User.findById(userId);
     const ticket = await ticketService.findTicketById(id);
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
     if (!ticket) throw new CustomError.NotFoundError("Ticket not found!");
 
-    const response = await ticketService.changeTicketStatus(id, {
-      ticketStatus,
-    });
+    const response = await ticketService.changeTicketStatus(id, ticketStatus);
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
