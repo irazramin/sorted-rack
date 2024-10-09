@@ -13,6 +13,7 @@ import Title from "../../../component/Shared/Title";
 import { ticketCategories } from "../utils/ticketCategories";
 import { ticketStatus } from "../utils/ticketStatus";
 import { ticketPriorities } from "../utils/ticketPriorities";
+import CommonCard from "../../../Common/CommonCard";
 
 const TicketList = () => {
   // const [error, loading, axiosFetch] = useAxios();
@@ -201,7 +202,7 @@ const TicketList = () => {
             </form>
           </div>
         </div>
-        <div className="user-table">
+        {/* <div className="user-table">
           <table className="table mt-3 table-responsive">
             <thead>
               <tr className="bg-light">
@@ -246,7 +247,10 @@ const TicketList = () => {
                           {ticket?.ticketStatus}
                         </span>
                       </td>
-                      <td className="d-flex align-items-center justify-content-center gap-2">
+                      <td
+                        className="d-flex align-items-center justify-content-center gap-2"
+                        style={{ border: "none" }}
+                      >
                         <span>
                           <i class="bi bi-chat-left-text"></i>
                         </span>
@@ -254,10 +258,6 @@ const TicketList = () => {
                       </td>
                       <td>{formatCreatedAt(ticket?.createdAt)}</td>
                       <td className="action-wrapper">
-                        {/* <Link to={`/ticket/edit/${ticket?._id}`}>
-                       
-                      </Link> */}
-
                         {ticket?.ticketStatus === "New ticket" && (
                           <>
                             <button
@@ -300,6 +300,81 @@ const TicketList = () => {
                 })}
             </tbody>
           </table>
+        </div> */}
+        <div className="data-card">
+          {Array.isArray(tickets) &&
+            tickets?.map((ticket) => {
+              return (
+                <CommonCard>
+                  <div className="card-info">
+                    <span className="category">{ticket?.ticketCategory}</span>
+                    <h4 className="title">{ticket?.ticketName}</h4>
+                    <p className="description">{ticket?.ticketDetails}</p>
+                  </div>
+                  {/* <hr className="divider" /> */}
+                  <div className="middle-section">
+                    <span
+                      className={`card-chip ${ticket?.ticketStatus
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-")}`}
+                    >
+                      {ticket?.ticketStatus}
+                    </span>
+                    <span
+                      className={`card-chip ${ticket?.ticketPriority
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-")}`}
+                    >
+                      {ticket?.ticketPriority}
+                    </span>
+                    <span className={`card-chip comment`}>
+                      <i class="bi bi-chat-left-text"></i>{" "}
+                      {ticket?.ticketComment}
+                    </span>
+                  </div>
+                  {ticket?.ticketStatus === "New ticket" && (
+                    <button
+                      onClick={() => {
+                        if (ticket?.ticketStatus !== "New ticket") {
+                          toast.error("Admin already working on");
+                        } else {
+                          handleShow(ticket?._id);
+                        }
+                      }}
+                      className="delete-button"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  )}
+
+                  <div className="action">
+                    {/* {ticket?.ticketStatus === "New ticket" && ( */}
+                    <button
+                      disabled={ticket?.ticketStatus !== "New ticket"}
+                      onClick={() => {
+                        if (ticket?.ticketStatus !== "New ticket") {
+                          toast.error("Admin already working on");
+                        } else {
+                          navigate(`/ticket/edit/${ticket?._id}`);
+                        }
+                      }}
+                    >
+                      edit
+                    </button>
+                    {/* )} */}
+                    <button
+                      onClick={() => {
+                        handleCommentSectionShow(ticket?._id);
+                      }}
+                    >
+                      view
+                    </button>
+                  </div>
+                </CommonCard>
+              );
+            })}
         </div>
       </div>
       <CustomModal

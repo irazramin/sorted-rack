@@ -70,7 +70,6 @@ const createAssignedProduct = async (req, res) => {
 };
 
 const getAllAssignedProduct = async (req, res) => {
-  
   if (req.user.role === "superadmin") {
     const response = await AssignedProduct.find({ status: "active" })
       .populate({ path: "user", select: "email fname lname userName" })
@@ -83,25 +82,27 @@ const getAllAssignedProduct = async (req, res) => {
 
     const finalResponse = response.map((item) => {
       const assignedDevicesList = {};
-      assignedDevicesList._id = item._id;
-      assignedDevicesList.firstName = item.user.fname;
-      assignedDevicesList.lastName = item.user.lname;
-      assignedDevicesList.email = item.user.email;
-      assignedDevicesList.username = item.user.userName;
-      assignedDevicesList.branch = item.product.branch;
-      assignedDevicesList.warrantyPeriod = item.product.warrantyPeriod;
-      assignedDevicesList.productCategory = item.product.productCategory;
-      assignedDevicesList.systemName = item.product.systemName;
-      assignedDevicesList.systemModel = item.product.systemModel;
-      assignedDevicesList.productType = item.product.productType;
-      assignedDevicesList.systemBrand = item.product.systemBrand;
-      assignedDevicesList.cpu = item.product.cpu;
-      assignedDevicesList.ram = item.product.ram;
-      assignedDevicesList.storageCapacity = item.product.storageCapacity;
-      assignedDevicesList.os = item.product.os;
-      assignedDevicesList.macAddress = item.product.macAddress;
-      assignedDevicesList.productKey = item.product.productKey;
-      assignedDevicesList.serialNumber = item.product.serialNumber;
+      assignedDevicesList._id = item?._id;
+      assignedDevicesList.firstName = item?.user?.fname ?? "";
+      assignedDevicesList.lastName = item?.user?.lname ?? "";
+      assignedDevicesList.email = item?.user?.email ?? "";
+      assignedDevicesList.username = item?.user?.userName ?? "";
+      assignedDevicesList.branch = item?.product?.branch ?? "";
+      assignedDevicesList.warrantyPeriod = item?.product?.warrantyPeriod ?? "";
+      assignedDevicesList.productCategory =
+        item?.product?.productCategory ?? "";
+      assignedDevicesList.systemName = item?.product?.systemName ?? "";
+      assignedDevicesList.systemModel = item?.product?.systemModel ?? "";
+      assignedDevicesList.productType = item?.product?.productType ?? "";
+      assignedDevicesList.systemBrand = item?.product?.systemBrand ?? "";
+      assignedDevicesList.cpu = item?.product?.cpu ?? "";
+      assignedDevicesList.ram = item?.product?.ram ?? "";
+      assignedDevicesList.storageCapacity =
+        item?.product?.storageCapacity ?? "";
+      assignedDevicesList.os = item?.product?.os ?? "";
+      assignedDevicesList.macAddress = item?.product?.macAddress ?? "";
+      assignedDevicesList.productKey = item?.product?.productKey ?? "";
+      assignedDevicesList.serialNumber = item?.product?.serialNumber ?? "";
       assignedDevicesList.accessoriesName =
         item?.product?.accessoriesName == undefined
           ? "--"
@@ -110,10 +111,10 @@ const getAllAssignedProduct = async (req, res) => {
         item?.product?.networkDeviceName == undefined
           ? "--"
           : item?.product?.networkDeviceName;
-      assignedDevicesList.tag = item.product.tag;
-      assignedDevicesList.storageType = item.product.storageType;
-      assignedDevicesList.assignBy = item.assignedBy.email;
-      assignedDevicesList.assignDate = item.createdAt;
+      assignedDevicesList.tag = item?.product.tag;
+      assignedDevicesList.storageType = item?.product.storageType;
+      assignedDevicesList.assignBy = item?.assignedBy.email;
+      assignedDevicesList.assignDate = item?.createdAt;
       return assignedDevicesList;
     });
     // console.log("finalResponse", finalResponse);
@@ -124,13 +125,13 @@ const getAllAssignedProduct = async (req, res) => {
       branch: req.user.branch,
       status: "active",
     })
-    .populate({ path: "user", select: "email fname lname userName" })
-    .populate({
-      path: "product",
-      select:
-        "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
-    })
-    .populate({ path: "assignedBy", select: "email" });
+      .populate({ path: "user", select: "email fname lname userName" })
+      .populate({
+        path: "product",
+        select:
+          "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
+      })
+      .populate({ path: "assignedBy", select: "email" });
 
     const finalResponse = response.map((item) => {
       const assignedDevicesList = {};
@@ -179,15 +180,14 @@ const getSingleAssignedProduct = async (req, res) => {
     const singleAssignedDevice = await AssignedProduct.findOne({
       _id: assignedDeviceId,
     })
-    .populate({ path: "user", select: "email fname lname userName" })
-    .populate({
-      path: "product",
-      select:
-        "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
-    })
-    .populate({ path: "assignedBy", select: "email" });
+      .populate({ path: "user", select: "email fname lname userName" })
+      .populate({
+        path: "product",
+        select:
+          "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
+      })
+      .populate({ path: "assignedBy", select: "email" });
 
-    
     if (!singleAssignedDevice) {
       throw new CustomError.NotFoundError(
         `No document found with id ${assignedDeviceId}`
@@ -201,13 +201,13 @@ const getSingleAssignedProduct = async (req, res) => {
       _id: assignedDeviceId,
       branch: req.user.branch,
     })
-    .populate({ path: "user", select: "email fname lname userName" })
-    .populate({
-      path: "product",
-      select:
-        "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
-    })
-    .populate({ path: "assignedBy", select: "email" });
+      .populate({ path: "user", select: "email fname lname userName" })
+      .populate({
+        path: "product",
+        select:
+          "productType branch productCategory warrantyPeriod systemName systemModel systemBrand cpu ram storageType storageCapacity os macAddress productKey serialNumber accessoriesName networkDeviceName tag",
+      })
+      .populate({ path: "assignedBy", select: "email" });
 
     if (!singleAssignedDevice) {
       throw new CustomError.NotFoundError(

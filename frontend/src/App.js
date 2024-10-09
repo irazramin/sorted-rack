@@ -25,6 +25,7 @@ import { ToastContainer, toast } from "react-toastify";
 import AdminGuard from "./component/Guard/AdminGuard";
 import UserDashboard from "./Pages/UserDashboard";
 import RequestedTickets from "./Pages/RequestedTickets";
+import Analytics from "./Pages/Analytics";
 
 function App() {
   return (
@@ -117,6 +118,14 @@ function App() {
             element={
               <AdminGuard>
                 <RequestedTickets />
+              </AdminGuard>
+            }
+          />
+          <Route
+            path="analytics/"
+            element={
+              <AdminGuard>
+                <Analytics />
               </AdminGuard>
             }
           />

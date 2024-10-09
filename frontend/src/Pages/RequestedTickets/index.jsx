@@ -10,6 +10,8 @@ import CommentSidebar from "../../Common/CommentSidebar";
 import { ticketStatus } from "../Tickets/utils/ticketStatus";
 import { toast } from "react-toastify";
 import CustomModal from "../../Common/Modal";
+import { ticketCategories } from "../Tickets/utils/ticketCategories";
+import { ticketPriorities } from "../Tickets/utils/ticketPriorities";
 const RequestedTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState("");
   const [tickets, setTickets] = useState([]);
@@ -18,16 +20,24 @@ const RequestedTickets = () => {
   const [ticket, setTicket] = useState({});
   const [status, setStatus] = useState({});
   const [show, setShow] = useState(false);
-
+  const [query, setQuery] = useState({
+    category: "",
+    priority: "",
+    status: "",
+    search: "",
+  });
   useEffect(() => {
     fetchUserDetails();
-  }, []);
+  }, [query]);
 
   const fetchUserDetails = async () => {
     try {
-      const res = await axiosSecure.get("/admin/ticket", {
-        headers: { Authorization: userHeader() },
-      });
+      const res = await axiosSecure.get(
+        `/admin/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}`,
+        {
+          headers: { Authorization: userHeader() },
+        }
+      );
 
       console.log(res);
 
@@ -124,45 +134,101 @@ const RequestedTickets = () => {
     }
   };
 
-  return (
-    <div className="p-4">
-      <div className="mb-4 p-3 title-bar d-flex align-content-center justify-content-between">
-        <Title title="All Request Tickets" className="m-0" />
-        <div className="filter">
-          <select name="" id="">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="40">40</option>
-          </select>
-          <div class="custom-select"></div>
-          <div class="custom-select">
-            <select name="" id="">
-              <option value="" disabled selected>
-                Select a status
-              </option>
-              {ticketStatus?.map((ticket) => (
-                <>
-                  <option value={ticket.value}>{ticket.label}</option>
-                </>
-              ))}
-            </select>
-          </div>
-          <div class="custom-select">
-            <select name="" id="">
-              <option value="" disabled selected>
-                Select a priority
-              </option>
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setQuery((prevState) => ({
+      ...prevState,
+      search: e.target.search.value,
+    }));
+  };
 
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <input type="text" placeholder="Search" />
-        </div>
+  return (
+    <div className="p-4 ticket-list">
+      <div className="title-bar d-flex align-items-center justify-content-between">
+        <Title title="All Tickets" className="m-0" />
+        <Link to="/ticket/create">
+          <button className="common-button">Create Ticket</button>
+        </Link>
       </div>
-      <div className="" style={{ height: "70vh" }}>
+      <div className="table-wrapper">
+        <div className="filter-section">
+          <div className="d-flex align-items-center justify-content-between gap-2">
+            <div className="filter-select">
+              <select
+                name="category"
+                id="category"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    category: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a category
+                </option>
+                {ticketCategories?.map((category) => (
+                  <option value={category.value}>{category.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-select">
+              <select
+                name="status"
+                id="status"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    status: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a status
+                </option>
+                {ticketStatus?.map((status) => (
+                  <option value={status.value}>{status.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-select">
+              <select
+                name="priority"
+                id="priority"
+                onChange={(e) =>
+                  setQuery((prevState) => ({
+                    ...prevState,
+                    priority: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled selected>
+                  Select a priority
+                </option>
+                {ticketPriorities?.map((priority) => (
+                  <option value={priority.value}>{priority.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="filter-search">
+            <form
+              className=" d-flex align-items-center justify-content-between gap-2"
+              action="#"
+              onSubmit={handleSearchSubmit}
+            >
+              <input
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search.."
+              />
+              <button type="submit" className="common-button-square">
+                <i class="bi bi-search"></i>
+              </button>
+            </form>
+          </div>
+        </div>
         <table className="table">
           <thead>
             <tr className="bg-light">

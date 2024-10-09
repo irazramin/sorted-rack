@@ -36,18 +36,25 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 // const req = require("express/lib/request");
 
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.set("trust proxy", 1);
 app.use(
   rateLimiter({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 10000,
     standardHeaders: true,
     legacyHeaders: false,
   })
 );
 app.use(express.json());
 
-app.use(cors());
 app.use(helmet());
 app.use(xss());
 app.use(morgan("tiny"));

@@ -82,7 +82,25 @@ module.exports.getAllTicketsForAdmin = async (req, res) => {
     const { userId } = req.user;
     const user = await User.findById(userId);
 
+    const { category, status, priority, search } = req.query;
+
     const query = {};
+
+    if (search) {
+      query.ticketName = { $regex: new RegExp(search, "i") };
+    }
+
+    if (category) {
+      query.ticketCategory = category;
+    }
+
+    if (priority) {
+      query.ticketPriority = priority;
+    }
+
+    if (status) {
+      query.ticketStatus = status;
+    }
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 
