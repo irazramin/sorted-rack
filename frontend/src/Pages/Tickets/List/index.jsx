@@ -24,6 +24,7 @@ const TicketList = () => {
   const [comments, setComments] = useState([]);
   const [ticket, setTicket] = useState({});
   const navigate = useNavigate();
+  const [layoutSetting, setLayoutSetting] = useState("table");
   const [query, setQuery] = useState({
     category: "",
     priority: "",
@@ -200,182 +201,202 @@ const TicketList = () => {
                 <i class="bi bi-search"></i>
               </button>
             </form>
+            <div className="layout-setting">
+              <button
+                className={`${layoutSetting === "table" ? "active" : ""}`}
+                onClick={() => setLayoutSetting("table")}
+              >
+                <i class="bi bi-list-check"></i>
+              </button>
+              <button
+                className={`${layoutSetting === "card" ? "active" : ""}`}
+                onClick={() => setLayoutSetting("card")}
+              >
+                <i class="bi bi-grid-3x3-gap"></i>
+              </button>
+            </div>
           </div>
         </div>
-        {/* <div className="user-table">
-          <table className="table mt-3 table-responsive">
-            <thead>
-              <tr className="bg-light">
-                <th scope="col">TicketId</th>
-                <th scope="col">Category</th>
-                <th scope="col">Branch</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Status</th>
-                <th scope="col">Comments</th>
-                <th scope="col">Created</th>
-                <th scope="col" className="text-center">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(tickets) &&
-                tickets?.map((ticket) => {
-                  return (
-                    <tr key={ticket?._id}>
-                      <td>
-                        <span className="ticket-id">
-                          {ticket?._id.slice(0, 5)}
-                        </span>
-                      </td>
-                      <td>{ticket?.ticketCategory}</td>
-                      <td>{ticket?.userId?.branch}</td>
-                      <td className="priority">
-                        <span
-                          className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+        {layoutSetting === "table" ? (
+          <div className="user-table">
+            <table className="table mt-3 table-responsive">
+              <thead>
+                <tr className="bg-light">
+                  <th scope="col">TicketId</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Branch</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Comments</th>
+                  <th scope="col">Created</th>
+                  <th scope="col" className="text-center">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(tickets) &&
+                  tickets?.map((ticket) => {
+                    return (
+                      <tr key={ticket?._id}>
+                        <td>
+                          <span className="ticket-id">
+                            {ticket?._id.slice(0, 5)}
+                          </span>
+                        </td>
+                        <td>{ticket?.ticketCategory}</td>
+                        <td>{ticket?.userId?.branch}</td>
+                        <td className="priority">
+                          <span
+                            className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+                          >
+                            {ticket?.ticketPriority}
+                          </span>
+                        </td>
+                        <td>
+                          <span
+                            className={`chip ${ticket?.ticketStatus
+                              .toLowerCase()
+                              .split(" ")
+                              .join("-")}`}
+                          >
+                            {ticket?.ticketStatus}
+                          </span>
+                        </td>
+                        <td
+                          className="d-flex align-items-center justify-content-center gap-2"
+                          style={{ border: "none" }}
                         >
-                          {ticket?.ticketPriority}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`chip ${ticket?.ticketStatus
-                            .toLowerCase()
-                            .split(" ")
-                            .join("-")}`}
-                        >
-                          {ticket?.ticketStatus}
-                        </span>
-                      </td>
-                      <td
-                        className="d-flex align-items-center justify-content-center gap-2"
-                        style={{ border: "none" }}
+                          <span>
+                            <i class="bi bi-chat-left-text"></i>
+                          </span>
+                          {ticket?.commentCount}
+                        </td>
+                        <td>{formatCreatedAt(ticket?.createdAt)}</td>
+                        <td className="action-wrapper">
+                          {ticket?.ticketStatus === "New ticket" && (
+                            <>
+                              <button
+                                className="edit table-action"
+                                onClick={() => {
+                                  if (ticket?.ticketStatus !== "New ticket") {
+                                    toast.error("Admin already working on");
+                                  } else {
+                                    navigate(`/ticket/edit/${ticket?._id}`);
+                                  }
+                                }}
+                              >
+                                <i class="bi bi-pencil"></i>
+                              </button>
+                              <button
+                                className="table-action delete"
+                                onClick={() => {
+                                  if (ticket?.ticketStatus !== "New ticket") {
+                                    toast.error("Admin already working on");
+                                  } else {
+                                    handleShow(ticket?._id);
+                                  }
+                                }}
+                              >
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </>
+                          )}
+                          <button
+                            className="table-action details"
+                            onClick={() => {
+                              // handleCommentSectionShow(ticket?._id);
+                              navigate(`/ticket/${ticket?._id}`);
+                            }}
+                          >
+                            <i class="bi bi-eye-fill"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="data-card">
+            {Array.isArray(tickets) &&
+              tickets?.map((ticket) => {
+                return (
+                  <CommonCard>
+                    <div className="card-info">
+                      <span className="category">{ticket?.ticketCategory}</span>
+                      <h4 className="title">{ticket?.ticketName}</h4>
+                      <p className="description">
+                        {ticket?.ticketDetails?.slice(0, 80)}
+                      </p>
+                    </div>
+                    {/* <hr className="divider" /> */}
+                    <div className="middle-section">
+                      <span
+                        className={`card-chip ${ticket?.ticketStatus
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-")}`}
                       >
-                        <span>
-                          <i class="bi bi-chat-left-text"></i>
-                        </span>
-                        {ticket?.commentCount}
-                      </td>
-                      <td>{formatCreatedAt(ticket?.createdAt)}</td>
-                      <td className="action-wrapper">
-                        {ticket?.ticketStatus === "New ticket" && (
-                          <>
-                            <button
-                              className="edit table-action"
-                              onClick={() => {
-                                if (ticket?.ticketStatus !== "New ticket") {
-                                  toast.error("Admin already working on");
-                                } else {
-                                  navigate(`/ticket/edit/${ticket?._id}`);
-                                }
-                              }}
-                            >
-                              <i class="bi bi-pencil"></i>
-                            </button>
-                            <button
-                              className="table-action delete"
-                              onClick={() => {
-                                if (ticket?.ticketStatus !== "New ticket") {
-                                  toast.error("Admin already working on");
-                                } else {
-                                  handleShow(ticket?._id);
-                                }
-                              }}
-                            >
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </>
-                        )}
-                        <button
-                          className="table-action details"
-                          onClick={() => {
-                            handleCommentSectionShow(ticket?._id);
-                          }}
-                        >
-                          <i class="bi bi-eye-fill"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div> */}
-        <div className="data-card">
-          {Array.isArray(tickets) &&
-            tickets?.map((ticket) => {
-              return (
-                <CommonCard>
-                  <div className="card-info">
-                    <span className="category">{ticket?.ticketCategory}</span>
-                    <h4 className="title">{ticket?.ticketName}</h4>
-                    <p className="description">{ticket?.ticketDetails}</p>
-                  </div>
-                  {/* <hr className="divider" /> */}
-                  <div className="middle-section">
-                    <span
-                      className={`card-chip ${ticket?.ticketStatus
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-")}`}
-                    >
-                      {ticket?.ticketStatus}
-                    </span>
-                    <span
-                      className={`card-chip ${ticket?.ticketPriority
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-")}`}
-                    >
-                      {ticket?.ticketPriority}
-                    </span>
-                    <span className={`card-chip comment`}>
-                      <i class="bi bi-chat-left-text"></i>{" "}
-                      {ticket?.ticketComment}
-                    </span>
-                  </div>
-                  {ticket?.ticketStatus === "New ticket" && (
-                    <button
-                      onClick={() => {
-                        if (ticket?.ticketStatus !== "New ticket") {
-                          toast.error("Admin already working on");
-                        } else {
-                          handleShow(ticket?._id);
-                        }
-                      }}
-                      className="delete-button"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  )}
+                        {ticket?.ticketStatus}
+                      </span>
+                      <span
+                        className={`card-chip ${ticket?.ticketPriority
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-")}`}
+                      >
+                        {ticket?.ticketPriority}
+                      </span>
+                      <span className={`card-chip comment`}>
+                        <i class="bi bi-chat-left-text"></i>{" "}
+                        {ticket?.ticketComment}
+                      </span>
+                    </div>
+                    {ticket?.ticketStatus === "New ticket" && (
+                      <button
+                        onClick={() => {
+                          if (ticket?.ticketStatus !== "New ticket") {
+                            toast.error("Admin already working on");
+                          } else {
+                            handleShow(ticket?._id);
+                          }
+                        }}
+                        className="delete-button"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    )}
 
-                  <div className="action">
-                    {/* {ticket?.ticketStatus === "New ticket" && ( */}
-                    <button
-                      disabled={ticket?.ticketStatus !== "New ticket"}
-                      onClick={() => {
-                        if (ticket?.ticketStatus !== "New ticket") {
-                          toast.error("Admin already working on");
-                        } else {
-                          navigate(`/ticket/edit/${ticket?._id}`);
-                        }
-                      }}
-                    >
-                      edit
-                    </button>
-                    {/* )} */}
-                    <button
-                      onClick={() => {
-                        handleCommentSectionShow(ticket?._id);
-                      }}
-                    >
-                      view
-                    </button>
-                  </div>
-                </CommonCard>
-              );
-            })}
-        </div>
+                    <div className="action">
+                      {/* {ticket?.ticketStatus === "New ticket" && ( */}
+                      <button
+                        disabled={ticket?.ticketStatus !== "New ticket"}
+                        onClick={() => {
+                          if (ticket?.ticketStatus !== "New ticket") {
+                            toast.error("Admin already working on");
+                          } else {
+                            navigate(`/ticket/edit/${ticket?._id}`);
+                          }
+                        }}
+                      >
+                        edit
+                      </button>
+                      {/* )} */}
+                      <button
+                        onClick={() => {
+                          handleCommentSectionShow(ticket?._id);
+                        }}
+                      >
+                        view
+                      </button>
+                    </div>
+                  </CommonCard>
+                );
+              })}
+          </div>
+        )}
       </div>
       <CustomModal
         show={show}

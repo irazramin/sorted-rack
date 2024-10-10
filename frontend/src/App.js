@@ -26,6 +26,7 @@ import AdminGuard from "./component/Guard/AdminGuard";
 import UserDashboard from "./Pages/UserDashboard";
 import RequestedTickets from "./Pages/RequestedTickets";
 import Analytics from "./Pages/Analytics";
+import ViewTicket from "./Pages/Tickets/View";
 
 function App() {
   return (
@@ -130,6 +131,7 @@ function App() {
             }
           />
           <Route path="ticket/" element={<TicketList />} />
+          <Route path="ticket/:id" element={<ViewTicket />} />
           <Route path="ticket/create" element={<TicketAdd />} />
           <Route path="ticket/edit/:id" element={<TicketEdit />} />
         </Route>

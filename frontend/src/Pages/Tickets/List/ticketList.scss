@@ -22,7 +22,6 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-
       input,
       select {
         background: #f8f8f8;
@@ -35,6 +34,28 @@
 
       select {
         font-weight: 500;
+      }
+      .filter-search {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .layout-setting {
+          display: flex;
+          align-items: center;
+          // gap: 10px;
+          button {
+            border: none;
+            padding: 2px 12px;
+            color: #333;
+            font-weight: 700;
+
+            &.active {
+              background-color: #0b6efd;
+              color: #fff;
+            }
+          }
+        }
       }
     }
   }
@@ -156,21 +177,23 @@ td {
 
   .card-info {
     .category {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
       color: #777;
     }
     .title {
-      margin-top: 6px;
       font-weight: 700;
       font-size: 17px;
+      line-height: 20px;
     }
     .description {
-      margin: 7px 0;
+      margin: 0;
       font-weight: 500;
       font-size: 12px;
       width: 100%;
+      min-height: 40px;
+      max-height: 40px;
     }
 
     .divider {
@@ -181,7 +204,7 @@ td {
     }
   }
   .middle-section {
-    margin-top: 8px;
+    margin-top: 18px;
     display: flex;
     align-items: center;
     gap: 7px;
@@ -290,6 +313,7 @@ td {
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
+        transform: scale(1);
       }
     }
   }
