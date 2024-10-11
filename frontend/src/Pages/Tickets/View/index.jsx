@@ -9,6 +9,10 @@ import { useForm } from "react-hook-form";
 import Button from "../../../component/Shared/Button";
 import TextAreaField from "../../../component/Shared/Form/TextArea";
 import { useParams } from "react-router-dom";
+import { formatCreatedAt } from "../../../Utility/dateFormatter";
+import TicketInfo from "../../../component/TicketDetails/TicketInfo";
+import ProductInfo from "../../../component/TicketDetails/ProductInfo";
+
 const ViewTicket = () => {
   const { id } = useParams();
   const [expandSection, setExpandSection] = useState(false);
@@ -74,22 +78,31 @@ const ViewTicket = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(ticket);
-  }, [ticket]);
   return (
     <div className="view-ticket">
       <Row>
         <Col xl={3}>
-          <ShadowLessCard>
-            <div className="user-info">
-              <img className="user-img" src={user} alt="" />
-              <div className="info">
-                <h4 className="user-name">{ticket?.userId?.fname} {ticket?.userId?.lname}</h4>
-                <p className="user-email">{ticket?.userId?.email}</p>
-              </div>
-            </div>
-          </ShadowLessCard>
+          <Row className="gap-4">
+            <Col xl={12}>
+              <ShadowLessCard>
+                <div className="user-info">
+                  <img className="user-img" src={user} alt="" />
+                  <div className="info">
+                    <h4 className="user-name">
+                      {ticket?.userId?.fname} {ticket?.userId?.lname}
+                    </h4>
+                    <p className="user-email">{ticket?.userId?.email}</p>
+                  </div>
+                </div>
+              </ShadowLessCard>
+            </Col>
+            <Col xl={12}>
+              <TicketInfo ticket={ticket} />
+            </Col>
+            <Col xl={12}>
+              <ProductInfo ticket={ticket} />
+            </Col>
+          </Row>
         </Col>
         <Col xl={9}>
           <Row className="gap-4">
@@ -166,7 +179,9 @@ const ViewTicket = () => {
                       <img src={user} alt="" />
                       <div className="info">
                         <div className="name">
-                            <h4>{ticket?.userId?.fname} {ticket?.userId?.lname}</h4>
+                          <h4>
+                            {ticket?.userId?.fname} {ticket?.userId?.lname}
+                          </h4>
                         </div>
                       </div>
                     </div>

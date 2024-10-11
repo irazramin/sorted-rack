@@ -38,6 +38,10 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       required: [true, "User id is required"],
     },
+    assignTo: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+    },
   },
   { timestamps: true }
 );

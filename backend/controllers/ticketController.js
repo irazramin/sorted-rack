@@ -2,7 +2,7 @@ const StatusCodes = require("http-status-codes");
 const User = require("../models/user");
 const Ticket = require("../models/tickets");
 const ticketService = require("../services/ticketService");
-
+const CustomError  = require("../errors");
 module.exports.createTicker = async (req, res) => {
   try {
     const { userId } = req.user;
@@ -199,6 +199,7 @@ module.exports.findTicketByIdAndDelete = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
@@ -224,6 +225,66 @@ module.exports.changeTicketStatus = async (req, res) => {
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
     console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+};
+module.exports.assignTicket = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { id } = req.params;
+    const user = await User.findById(userId);
+    const { assignId } = req.body;
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const response = await ticketService.findTicketByIdAndUpdate(id, {
+      assignTo: assignId,
+    });
+
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
+    return res.status(StatusCodes.BAD_GATEWAY).json({ message: error });
+  }
+};
+
+module.exports.getAssignedTickets = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    const { adminId } = req.params;
+
+    const { category, status, priority, search } = req.query;
+
+    const query = {};
+
+    if (search) {
+      query.ticketName = { $regex: new RegExp(search, "i") };
+    }
+
+    if (category) {
+      query.ticketCategory = category;
+    }
+
+    if (priority) {
+      query.ticketPriority = priority;
+    }
+
+    if (status) {
+      query.ticketStatus = status;
+    }
+
+    if (adminId) {
+      query.assignTo = adminId;
+    }
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const response = await ticketService.getAllTickets(query);
+
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });

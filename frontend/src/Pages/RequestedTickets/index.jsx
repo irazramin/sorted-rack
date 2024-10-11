@@ -4,14 +4,15 @@ import Title from "../../component/Shared/Title";
 import { userHeader } from "../../Utility/userHeader";
 import { axiosSecure } from "../../api/axios";
 import { formatCreatedAt } from "../../Utility/dateFormatter";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Dropdown } from "react-bootstrap";
-import CommentSidebar from "../../Common/CommentSidebar";
 import { ticketStatus } from "../Tickets/utils/ticketStatus";
 import { toast } from "react-toastify";
 import CustomModal from "../../Common/Modal";
-import { ticketCategories } from "../Tickets/utils/ticketCategories";
-import { ticketPriorities } from "../Tickets/utils/ticketPriorities";
+import TableHeader from "../../component/Shared/Table/TableHeader";
+import { tableHeader } from "./utils/tableHeaders";
+import FilterSection from "../../component/Shared/FilterBar";
+import CommonCard from "../../Common/CommonCard";
 const RequestedTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState("");
   const [tickets, setTickets] = useState([]);
@@ -20,6 +21,9 @@ const RequestedTickets = () => {
   const [ticket, setTicket] = useState({});
   const [status, setStatus] = useState({});
   const [show, setShow] = useState(false);
+  const [layoutSetting, setLayoutSetting] = useState("table");
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState({
     category: "",
     priority: "",
@@ -145,191 +149,184 @@ const RequestedTickets = () => {
   return (
     <div className="p-4 ticket-list">
       <div className="title-bar d-flex align-items-center justify-content-between">
-        <Title title="All Tickets" className="m-0" />
-        <Link to="/ticket/create">
+        <Title title="Requested Tickets" className="m-0" />
+        {/* <Link to="/ticket/create">
           <button className="common-button">Create Ticket</button>
-        </Link>
+        </Link> */}
       </div>
       <div className="table-wrapper">
-        <div className="filter-section">
-          <div className="d-flex align-items-center justify-content-between gap-2">
-            <div className="filter-select">
-              <select
-                name="category"
-                id="category"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    category: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a category
-                </option>
-                {ticketCategories?.map((category) => (
-                  <option value={category.value}>{category.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-select">
-              <select
-                name="status"
-                id="status"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    status: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a status
-                </option>
-                {ticketStatus?.map((status) => (
-                  <option value={status.value}>{status.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-select">
-              <select
-                name="priority"
-                id="priority"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    priority: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a priority
-                </option>
-                {ticketPriorities?.map((priority) => (
-                  <option value={priority.value}>{priority.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="filter-search">
-            <form
-              className=" d-flex align-items-center justify-content-between gap-2"
-              action="#"
-              onSubmit={handleSearchSubmit}
-            >
-              <input
-                type="text"
-                name="search"
-                id="search"
-                placeholder="Search.."
-              />
-              <button type="submit" className="common-button-square">
-                <i class="bi bi-search"></i>
-              </button>
-            </form>
-          </div>
-        </div>
-        <table className="table">
-          <thead>
-            <tr className="bg-light">
-              <th scope="col">
-                <input className="form-check-input" type="checkbox" />
-              </th>
-              <th scope="col">#TicketID</th>
-              <th scope="col">Category</th>
-              <th scope="col">Priority</th>
-              <th scope="col">Status</th>
-              <th scope="col">Created</th>
-              <th scope="col" className="text-center">
-                <span>Action</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {tickets?.length > 0 &&
+        <FilterSection
+          handleSearchSubmit={handleSearchSubmit}
+          setQuery={setQuery}
+          layoutSetting={layoutSetting}
+          setLayoutSetting={setLayoutSetting}
+        />
+        {layoutSetting === "table" ? (
+          <table className="table mt-2">
+            <TableHeader headers={tableHeader} />
+            <tbody>
+              {tickets?.length > 0 &&
+                tickets?.map((ticket) => {
+                  return (
+                    <tr>
+                      <td>
+                        <span className="ticket-id">{ticket?._id}</span>
+                      </td>
+                      <td>{ticket?.ticketCategory}</td>
+                      <td className="priority">
+                        <span
+                          className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+                        >
+                          {ticket?.ticketPriority}
+                        </span>
+                      </td>
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            // variant="success"
+                            id="dropdown-basic"
+                            className={`dropd ${
+                              status[ticket?._id]
+                                ? status[ticket?._id]
+                                    .toLowerCase()
+                                    .split(" ")
+                                    .join("-")
+                                : ticket?.ticketStatus
+                                    .toLowerCase()
+                                    .split(" ")
+                                    .join("-")
+                            } d-flex align-items-center px-2 justify-content-between p-1 w-100`}
+                          >
+                            {status[ticket?._id]
+                              ? status[ticket?._id]
+                              : ticket?.ticketStatus}
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            {ticketStatus?.map((statusText) => (
+                              <Dropdown.Item
+                                href="#/action-1"
+                                onClick={() => {
+                                  const statusNow = statusText.value;
+                                  handleStatusChange(ticket?._id, statusNow);
+                                  // setStatus((prevState) => ({
+                                  //   ...prevState,
+                                  //   [ticket?._id]: statusText.value,
+                                  // }));
+                                }}
+                              >
+                                {statusText.value}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                      <td>{formatCreatedAt(ticket?.createdAt)}</td>
+                      <td className="action-wrapper ">
+                        <button
+                          className="table-action details"
+                          onClick={() => {
+                            // handleCommentSectionShow(ticket?._id);
+                            navigate(`/ticket/${ticket?._id}`);
+                          }}
+                        >
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+
+                        <button
+                          className="table-action delete"
+                          onClick={() => {
+                            handleShow(ticket?._id);
+                          }}
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        ) : (
+          <div className="data-card">
+            {Array.isArray(tickets) &&
               tickets?.map((ticket) => {
                 return (
-                  <tr>
-                    <td scope="row">
-                      <input className="form-check-input" type="checkbox" />
-                    </td>
-                    <td>
-                      <span className="ticket-id">{ticket?._id}</span>
-                    </td>
-                    <td>{ticket?.ticketCategory}</td>
-                    <td className="priority">
+                  <CommonCard>
+                    <div className="card-info">
+                      <span className="category">{ticket?.ticketCategory}</span>
+                      <h4 className="title">{ticket?.ticketName}</h4>
+                      <p className="description">
+                        {ticket?.ticketDetails?.slice(0, 80)}
+                      </p>
+                    </div>
+                    {/* <hr className="divider" /> */}
+                    <div className="middle-section">
                       <span
-                        className={`chip px-3 rounded ${ticket?.ticketPriority.toLowerCase()}`}
+                        className={`card-chip ${ticket?.ticketStatus
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-")}`}
+                      >
+                        {ticket?.ticketStatus}
+                      </span>
+                      <span
+                        className={`card-chip ${ticket?.ticketPriority
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-")}`}
                       >
                         {ticket?.ticketPriority}
                       </span>
-                    </td>
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          // variant="success"
-                          id="dropdown-basic"
-                          className={`dropd ${
-                            status[ticket?._id]
-                              ? status[ticket?._id]
-                                  .toLowerCase()
-                                  .split(" ")
-                                  .join("-")
-                              : ticket?.ticketStatus
-                                  .toLowerCase()
-                                  .split(" ")
-                                  .join("-")
-                          } d-flex align-items-center px-2 justify-content-between p-1 w-100`}
-                        >
-                          {status[ticket?._id]
-                            ? status[ticket?._id]
-                            : ticket?.ticketStatus}
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          {ticketStatus?.map((statusText) => (
-                            <Dropdown.Item
-                              href="#/action-1"
-                              onClick={() => {
-                                const statusNow = statusText.value;
-                                handleStatusChange(ticket?._id, statusNow);
-                                // setStatus((prevState) => ({
-                                //   ...prevState,
-                                //   [ticket?._id]: statusText.value,
-                                // }));
-                              }}
-                            >
-                              {statusText.value}
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </td>
-                    <td>{formatCreatedAt(ticket?.createdAt)}</td>
-                    <td className="action-wrapper ">
+                      <span className={`card-chip comment`}>
+                        <i class="bi bi-chat-left-text"></i>{" "}
+                        {ticket?.ticketComment}
+                      </span>
+                    </div>
+                    {ticket?.ticketStatus === "New ticket" && (
                       <button
-                        className="table-action details"
                         onClick={() => {
-                          handleCommentSectionShow(ticket?._id);
+                          if (ticket?.ticketStatus !== "New ticket") {
+                            toast.error("Admin already working on");
+                          } else {
+                            handleShow(ticket?._id);
+                          }
                         }}
-                      >
-                        <i class="bi bi-eye-fill"></i>
-                      </button>
-
-                      <button
-                        className="table-action delete"
-                        onClick={() => {
-                          handleShow(ticket?._id);
-                        }}
+                        className="delete-button"
                       >
                         <i class="bi bi-trash"></i>
                       </button>
-                    </td>
-                  </tr>
+                    )}
+
+                    <div className="action">
+                      {/* {ticket?.ticketStatus === "New ticket" && ( */}
+                      <button
+                        disabled={ticket?.ticketStatus !== "New ticket"}
+                        onClick={() => {
+                          if (ticket?.ticketStatus !== "New ticket") {
+                            toast.error("Admin already working on");
+                          } else {
+                            navigate(`/ticket/edit/${ticket?._id}`);
+                          }
+                        }}
+                      >
+                        edit
+                      </button>
+                      {/* )} */}
+                      <button
+                        onClick={() => {
+                          navigate(`/ticket/${ticket?._id}`);
+                          // handleCommentSectionShow(ticket?._id);
+                        }}
+                      >
+                        view
+                      </button>
+                    </div>
+                  </CommonCard>
                 );
               })}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       <CustomModal
@@ -339,7 +336,7 @@ const RequestedTickets = () => {
         handleAction={deleteSingleTicket}
         message="If you delete this ticket, I'll will be delete forever"
       />
-      <div
+      {/* <div
         onClick={() => setShowCommentSidebar(false)}
         className={`comment-sidebar-wrapper ${
           showCommentSidebar ? "show" : ""
@@ -354,7 +351,7 @@ const RequestedTickets = () => {
           setTicket={setTicket}
           ticket={ticket}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

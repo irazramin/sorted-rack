@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Ticket = require("../models/tickets");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { checkPermission, checkUserRole } = require("../utility");
@@ -113,6 +114,30 @@ const UpdateUserPassword = (req, res) => {
   res.send("UpdateUserPassword");
 };
 
+const getAdminUser = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    let adminUsers = await User.find({
+      $or: [{ role: "superadmin" }, { role: "admin" }],
+    });
+
+    adminUsers = adminUsers.map((admin) => {
+      return {
+        label: `${admin?.fname} ${admin?.lname}`,
+        value: admin?._id,
+      };
+    });
+
+    return res.status(StatusCodes.OK).json({ data: adminUsers });
+  } catch (error) {
+    res.status(StatusCodes.BAD_GATEWAY).json({ message: error });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
@@ -120,4 +145,5 @@ module.exports = {
   UpdateUserRole,
   deleteAllUsers,
   UpdateUserPassword,
+  getAdminUser,
 };

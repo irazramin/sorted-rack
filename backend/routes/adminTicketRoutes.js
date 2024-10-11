@@ -9,12 +9,13 @@ const {
   getAllTicketsForAdmin,
   findTicketByIdForAdmin,
   changeTicketStatus,
+  assignTicket,
 } = require("../controllers/ticketController");
 
 router.get(
   "/",
   authenticateUser,
-  authorizeRoles("superadmin", "admin"),
+  authorizeRoles("superadmin"),
   getAllTicketsForAdmin
 );
 
@@ -30,6 +31,13 @@ router.put(
   authenticateUser,
   authorizeRoles("superadmin", "admin"),
   changeTicketStatus
+);
+
+router.put(
+  "/:id/assign",
+  authenticateUser,
+  authorizeRoles("superadmin", "user"),
+  assignTicket
 );
 
 module.exports = router;

@@ -35,34 +35,50 @@ const getSingleProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const {id:productId}=req.params;
-  const product = await Product.findOneAndUpdate({_id:productId},req.body,{
+  const { id: productId } = req.params;
+  const product = await Product.findOneAndUpdate({ _id: productId }, req.body, {
     new: true,
     runValidators: true,
-  })
+  });
 
-  if(!product){
-    throw new CustomError.NotFoundError(`No product found with ${productId}`)
+  if (!product) {
+    throw new CustomError.NotFoundError(`No product found with ${productId}`);
   }
 
-  res.status(StatusCodes.OK).json({product})
+  res.status(StatusCodes.OK).json({ product });
 };
 
 const deleteProduct = async (req, res) => {
-  const {id:productId}=req.params;
-  const product = await Product.findOne({_id:productId})
+  const { id: productId } = req.params;
+  const product = await Product.findOne({ _id: productId });
 
-  if(!product){
-    throw new CustomError.NotFoundError(`No product found with ${productId}`)
+  if (!product) {
+    throw new CustomError.NotFoundError(`No product found with ${productId}`);
   }
 
   await product.remove();
-  res.status(StatusCodes.OK).json({msg:'Product removed sucessfully'})
+  res.status(StatusCodes.OK).json({ msg: "Product removed sucessfully" });
 };
 
 const deleteAllProduct = async (req, res) => {
   await Product.deleteMany({});
-  res.status(StatusCodes.OK).json({msg:'All products Deleated'})
+  res.status(StatusCodes.OK).json({ msg: "All products Deleated" });
+};
+
+const checkProductQuantity = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const product = await Product.countDocuments({ productType: category });
+
+    if (product <= 0) {
+      return res.status(StatusCodes.OK).json({ stock: false, count: product });
+    }
+    return res.status(StatusCodes.OK).json({ stock: true, count: product });
+  } catch (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Internal server error" });
+  }
 };
 
 module.exports = {
@@ -72,4 +88,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   deleteAllProduct,
+  checkProductQuantity,
 };

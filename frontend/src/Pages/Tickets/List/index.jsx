@@ -14,6 +14,7 @@ import { ticketCategories } from "../utils/ticketCategories";
 import { ticketStatus } from "../utils/ticketStatus";
 import { ticketPriorities } from "../utils/ticketPriorities";
 import CommonCard from "../../../Common/CommonCard";
+import FilterSection from "../../../component/Shared/FilterBar";
 
 const TicketList = () => {
   // const [error, loading, axiosFetch] = useAxios();
@@ -125,100 +126,14 @@ const TicketList = () => {
         </Link>
       </div>
       <div className="table-wrapper">
-        <div className="filter-section">
-          <div className="d-flex align-items-center justify-content-between gap-2">
-            <div className="filter-select">
-              <select
-                name="category"
-                id="category"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    category: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a category
-                </option>
-                {ticketCategories?.map((category) => (
-                  <option value={category.value}>{category.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-select">
-              <select
-                name="status"
-                id="status"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    status: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a status
-                </option>
-                {ticketStatus?.map((status) => (
-                  <option value={status.value}>{status.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-select">
-              <select
-                name="priority"
-                id="priority"
-                onChange={(e) =>
-                  setQuery((prevState) => ({
-                    ...prevState,
-                    priority: e.target.value,
-                  }))
-                }
-              >
-                <option value="" disabled selected>
-                  Select a priority
-                </option>
-                {ticketPriorities?.map((priority) => (
-                  <option value={priority.value}>{priority.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="filter-search">
-            <form
-              className=" d-flex align-items-center justify-content-between gap-2"
-              action="#"
-              onSubmit={handleSearchSubmit}
-            >
-              <input
-                type="text"
-                name="search"
-                id="search"
-                placeholder="Search.."
-              />
-              <button type="submit" className="common-button-square">
-                <i class="bi bi-search"></i>
-              </button>
-            </form>
-            <div className="layout-setting">
-              <button
-                className={`${layoutSetting === "table" ? "active" : ""}`}
-                onClick={() => setLayoutSetting("table")}
-              >
-                <i class="bi bi-list-check"></i>
-              </button>
-              <button
-                className={`${layoutSetting === "card" ? "active" : ""}`}
-                onClick={() => setLayoutSetting("card")}
-              >
-                <i class="bi bi-grid-3x3-gap"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+        <FilterSection
+          handleSearchSubmit={handleSearchSubmit}
+          setQuery={setQuery}
+          layoutSetting={layoutSetting}
+          setLayoutSetting={setLayoutSetting}
+        />
         {layoutSetting === "table" ? (
-          <div className="user-table">
+          <div className="user-table mt-2">
             <table className="table mt-3 table-responsive">
               <thead>
                 <tr className="bg-light">
@@ -349,9 +264,9 @@ const TicketList = () => {
                       >
                         {ticket?.ticketPriority}
                       </span>
-                      <span className={`card-chip comment`}>
+                      <span className={`card-chip comment gap-2 d-flex`}>
                         <i class="bi bi-chat-left-text"></i>{" "}
-                        {ticket?.ticketComment}
+                        {ticket?.commentCount}
                       </span>
                     </div>
                     {ticket?.ticketStatus === "New ticket" && (
@@ -386,7 +301,8 @@ const TicketList = () => {
                       {/* )} */}
                       <button
                         onClick={() => {
-                          handleCommentSectionShow(ticket?._id);
+                          navigate(`/ticket/${ticket?._id}`);
+                          // handleCommentSectionShow(ticket?._id);
                         }}
                       >
                         view

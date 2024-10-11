@@ -123,6 +123,14 @@ function App() {
             }
           />
           <Route
+            path="assigned-tickets/"
+            element={
+              <AdminGuard>
+                <RequestedTickets />
+              </AdminGuard>
+            }
+          />
+          <Route
             path="analytics/"
             element={
               <AdminGuard>

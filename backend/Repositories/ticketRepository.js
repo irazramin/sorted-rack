@@ -79,6 +79,7 @@ const findTicketById = async (ticketId) => {
 
 const findTicketByIdAndUpdate = async (ticketId, data) => {
   try {
+    console.log(data);
     return await Tickets.findByIdAndUpdate(ticketId, data, { new: true });
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);

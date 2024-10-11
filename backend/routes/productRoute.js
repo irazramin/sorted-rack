@@ -8,6 +8,7 @@ const {
   updateProduct,
   deleteProduct,
   deleteAllProduct,
+  checkProductQuantity,
 } = require("../controllers/product");
 
 const {
@@ -44,5 +45,11 @@ router
     [authenticateUser, authorizeRoles("superadmin", "admin")],
     deleteProduct
   );
+
+router.get(
+  "/checking-product-quantity/:category",
+  [authenticateUser, authorizeRoles("superadmin", "admin")],
+  checkProductQuantity
+);
 
 module.exports = router;
