@@ -4,19 +4,19 @@ import product from "../../../assests/images/features.png";
 import { axiosSecure } from "../../../api/axios";
 import { userHeader } from "../../../Utility/userHeader";
 import { getUserDetails } from "../../../service";
-import { useNavigate } from "react-router-dom";
-const ProductInfo = ({ ticket }) => {
-  const [isAvailable, setIsAvailable] = useState(false);
+import Select from "react-select";
+import AssignProductModal from "../../../Common/Modal/AssignProduct";
+import { toast } from "react-toastify";
+
+const ProductInfo = ({ ticket, refresh, setRefresh }) => {
+  const [availableProducts, setAvailableProducts] = useState({});
   const { userId } = getUserDetails();
-  const navigate = useNavigate();
+  const [showAssignProduct, setShowAssignProduct] = useState(false);
+
   useEffect(() => {
     if (ticket) {
       fetchingAdminUsers();
     }
-  }, [ticket]);
-
-  useEffect(() => {
-    console.log(ticket);
   }, [ticket]);
 
   const fetchingAdminUsers = async () => {
@@ -29,15 +29,49 @@ const ProductInfo = ({ ticket }) => {
           },
         }
       );
-      setIsAvailable(response?.data?.stock);
+      if (response) {
+        setAvailableProducts(response?.data);
+        console.log(response.data);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleAssignProduct = async () => {
-    navigate('/')
+  const handleShowAssignProductModal = async () => {
+    setShowAssignProduct((prevState) => !prevState);
   };
+
+  const handleAssignProduct = async (e) => {
+    try {
+      const response = await axiosSecure.post(
+        `/assignedProduct`,
+        {
+          branch: ticket?.userId?.branch || "Goa",
+          user: ticket?.userId?._id,
+          product: e.value,
+          ticketId: ticket.uniqueId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.userDetails &&
+              JSON.parse(localStorage.userDetails).token
+            }`,
+          },
+        }
+      );
+
+      if (response) {
+        setShowAssignProduct(false);
+        setRefresh((prevState) => !prevState);
+        toast.success("Product assigned successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <ShadowLessCard>
       <div className="product-info">
@@ -49,18 +83,57 @@ const ProductInfo = ({ ticket }) => {
             <div className="info">
               <h5 className="category">{ticket?.ticketCategory}</h5>
               <div className="available">
-                {isAvailable ? (
-                  <span className="in-stock stock">In stock</span>
+                {availableProducts?.count > 0 ? (
+                  <>
+                    {ticket?.ticketStatus === "Resolve" ? (
+                      <span className="in-stock stock">Assigned</span>
+                    ) : (
+                      <span className="in-stock stock">In stock</span>
+                    )}
+                  </>
+                ) : ticket?.ticketStatus === "Resolve" ? (
+                  <span className="in-stock stock">Assigned</span>
                 ) : (
                   <span className="stock-out stock">Stock out</span>
                 )}
               </div>
             </div>
           </div>
-          {isAvailable && ticket?.assignTo === userId && (
-            <button onClick={handleAssignProduct}>Assign product</button>
+          {availableProducts?.stock && ticket?.assignTo === userId ? (
+            <>
+              {!showAssignProduct ? (
+                <button onClick={handleShowAssignProductModal}>
+                  Assign product
+                </button>
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <></>
           )}
         </div>
+        {availableProducts?.stock && ticket?.assignTo === userId ? (
+          showAssignProduct && (
+            <AssignProductModal
+              title="Select product"
+              show={showAssignProduct}
+              // handleAction={}
+              handleClose={() => setShowAssignProduct(false)}
+            >
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                isSearchable={true}
+                onChange={(e) => handleAssignProduct(e)}
+                name="color"
+                options={availableProducts?.product}
+              />
+            </AssignProductModal>
+          )
+        ) : (
+          <></>
+        )}
       </div>
     </ShadowLessCard>
   );

@@ -27,6 +27,7 @@ import UserDashboard from "./Pages/UserDashboard";
 import RequestedTickets from "./Pages/RequestedTickets";
 import Analytics from "./Pages/Analytics";
 import ViewTicket from "./Pages/Tickets/View";
+import AssignedTickets from "./Pages/AssignedTickets";
 
 function App() {
   return (
@@ -106,14 +107,7 @@ function App() {
               </AdminGuard>
             }
           />
-          <Route
-            path="assigned/"
-            element={
-              <AdminGuard>
-                <AssignItem />
-              </AdminGuard>
-            }
-          />
+          <Route path="assigned/" element={<AssignItem />} />
           <Route
             path="requested-tickets/"
             element={
@@ -126,7 +120,7 @@ function App() {
             path="assigned-tickets/"
             element={
               <AdminGuard>
-                <RequestedTickets />
+                <AssignedTickets />
               </AdminGuard>
             }
           />

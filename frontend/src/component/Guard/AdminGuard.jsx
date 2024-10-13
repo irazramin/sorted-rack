@@ -6,7 +6,7 @@ const AdminGuard = ({ children }) => {
   const navigate = useNavigate();
   const { role } = getUserDetails();
   useEffect(() => {
-    if (role !== "superadmin") {
+    if (role !== "superadmin" && role !== "admin") {
       navigate("/login");
     }
     if (role === "user") {
@@ -14,7 +14,7 @@ const AdminGuard = ({ children }) => {
     }
   }, [role, navigate]);
 
-  if (role !== "superadmin") {
+  if (role !== "superadmin" && role !== "admin") {
     return null;
   }
 

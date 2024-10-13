@@ -5,8 +5,9 @@ import { axiosSecure } from "../../../api/axios";
 import { formatCreatedAt } from "../../../Utility/dateFormatter";
 import Select from "react-select";
 import { getUserDetails } from "../../../service";
+import { toast } from "react-toastify";
 
-const TicketInfo = ({ ticket }) => {
+const TicketInfo = ({ ticket, setRefresh }) => {
   const { role } = getUserDetails();
   const [adminUsers, setAdminUser] = useState([]);
   const [showAssignSearch, setAssignSearch] = useState(false);
@@ -41,6 +42,30 @@ const TicketInfo = ({ ticket }) => {
 
       if (res) {
         setAssignSearch(false);
+        toast.success(`This ticket is assigned with ${data.label}`);
+        setRefresh((prevState) => !prevState);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnassignTicket = async () => {
+    try {
+      const res = await axiosSecure.put(
+        `/admin/ticket/${ticket?._id}/assign`,
+        { assignId: null },
+        {
+          headers: {
+            Authorization: userHeader(),
+          },
+        }
+      );
+
+      if (res) {
+        setAssignSearch(false);
+        toast.success(`Ticket unassigned`);
+        setRefresh((prevState) => !prevState);
       }
     } catch (error) {
       console.error(error);
@@ -54,7 +79,7 @@ const TicketInfo = ({ ticket }) => {
           <li className="detail">
             <span className="type">ID</span>
             <span>:</span>
-            <span className="value">{ticket?._id.slice(0, 10)}</span>
+            <span className="value">{ticket?.uniqueId}</span>
           </li>
           <li className="detail">
             <span className="type">Category</span>
@@ -86,7 +111,7 @@ const TicketInfo = ({ ticket }) => {
             </span>
           </li>
         </ul>
-        {role === "superadmin" && (
+        {role === "superadmin" && ticket?.ticketStatus !== "Resolve" ? (
           <div className="assign-wrapper">
             {showAssignSearch ? (
               <Select
@@ -98,6 +123,13 @@ const TicketInfo = ({ ticket }) => {
                 name="color"
                 options={adminUsers}
               />
+            ) : ticket?.assignTo ? (
+              <button
+                onClick={() => handleUnassignTicket()}
+                className="assign-to"
+              >
+                Unassign
+              </button>
             ) : (
               <button
                 onClick={() => setAssignSearch((prevState) => !prevState)}
@@ -107,6 +139,8 @@ const TicketInfo = ({ ticket }) => {
               </button>
             )}
           </div>
+        ) : (
+          <></>
         )}
       </div>
     </ShadowLessCard>

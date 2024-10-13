@@ -5,7 +5,7 @@ const AuthGuardSuperAdmin = () => {
   const location = useLocation();
   const { role = false } = getUserDetails();
   return isLoggedIn() ? (
-    role === "superadmin" ? (
+    role === "superadmin" || role === "admin" ? (
       <Outlet />
     ) : (
       <Navigate to="/unauthorised" state={{ from: location }} replace />

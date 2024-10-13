@@ -9,9 +9,11 @@ const createTicket = async (body) => {
   }
 };
 
-const getAllTickets = async (query = {}) => {
+const getAllTickets = async (query = {}, page = 1, pageSize = 10) => {
   try {
-    let data = await ticketRepository.getAllTickets(query);
+    const limit = parseInt(pageSize);
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+    let data = await ticketRepository.getAllTickets(query, limit, offset);
 
     data = await Promise.all(
       data?.map(async (ticket) => {
@@ -19,8 +21,9 @@ const getAllTickets = async (query = {}) => {
           ticketId: ticket?._id,
         });
         const plainTicket = ticket.toObject();
+
         plainTicket.commentCount = commentsDocuments;
-        console.log(ticket);
+
         return plainTicket;
       })
     );

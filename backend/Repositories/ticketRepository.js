@@ -11,15 +11,20 @@ const createTicket = async (data) => {
   }
 };
 
-const getAllTickets = async (query = {}) => {
+const getAllTickets = async (query = {}, limit, offset) => {
   try {
-    return await Tickets.find(query).populate([
-      {
-        path: "userId",
-        select: "_id username email branch",
-        model: user,
-      },
-    ]);
+    console.log(limit, offset);
+    return await Tickets.find(query)
+      .skip(offset)
+      .limit(limit)
+      // .countDocuments({})
+      .populate([
+        {
+          path: "userId",
+          select: "_id username email branch",
+          model: user,
+        },
+      ]);
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }

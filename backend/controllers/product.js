@@ -67,13 +67,30 @@ const deleteAllProduct = async (req, res) => {
 
 const checkProductQuantity = async (req, res) => {
   try {
+    const { userId } = req.user;
     const { category } = req.params;
-    const product = await Product.countDocuments({ productType: category });
+    let product = await Product.find({
+      productType: category,
+      createdBy: userId,
+      tag: "notassigned",
+    });
 
-    if (product <= 0) {
-      return res.status(StatusCodes.OK).json({ stock: false, count: product });
+    if (product.length <= 0) {
+      return res
+        .status(StatusCodes.OK)
+        .json({ stock: false, count: product.length, product: product });
     }
-    return res.status(StatusCodes.OK).json({ stock: true, count: product });
+
+    product = product.map((pro) => {
+      return {
+        label: pro?.accessoriesName,
+        value: pro?._id,
+      };
+    });
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ stock: true, count: product.length, product: product });
   } catch (error) {
     return res
       .status(StatusCodes.BAD_REQUEST)

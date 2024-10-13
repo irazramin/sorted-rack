@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./user");
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -10,14 +11,10 @@ const ticketSchema = new mongoose.Schema(
     ticketCategory: {
       type: String,
       trim: true,
-      // enum: ["Mouse", "Monitor", "Headphone", "Keyboard", "USBDongle"],
       required: [true, "Please select a ticket category"],
     },
     ticketStatus: {
       type: String,
-      // trim: true,
-      // enum: ["New ticket", "In progress", "On hold", "Close", "Resolve"],
-      required: false,
       default: function () {
         return "New ticket";
       },
@@ -35,15 +32,51 @@ const ticketSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Types.ObjectId,
-      required: true,
+      ref: "User",
       required: [true, "User id is required"],
     },
     assignTo: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
       required: false,
     },
+    uniqueId: {
+      type: String,
+      required: [true, "Unique ID is required"],
+    },
+    
   },
   { timestamps: true }
 );
+
+ticketSchema.pre("validate", async function (next) {
+  const ticket = this;
+
+  if (ticket.isNew && !ticket.uniqueId) {
+    let isUnique = false;
+    const user = await User.findById(ticket.userId);
+
+    if (!user || !user.branch) {
+      return next(new Error("User or branch not found!"));
+    }
+
+    const branchName = user.branch.toLowerCase();
+
+    while (!isUnique) {
+      const randomNumber = Math.floor(10000 + Math.random() * 90000);
+      const uniqueId = `${branchName}_${randomNumber}`;
+
+      const existingTicket = await mongoose.models.Ticket.findOne({
+        uniqueId: uniqueId,
+      });
+      if (!existingTicket) {
+        ticket.uniqueId = uniqueId;
+        isUnique = true;
+      }
+    }
+  }
+
+  next();
+});
 
 module.exports = mongoose.model("Ticket", ticketSchema);

@@ -69,6 +69,23 @@ const FilterSection = ({
             ))}
           </select>
         </div>
+        <div className="filter-select">
+          <select
+            name="pageSize"
+            id="pageSize"
+            onChange={(e) =>
+              setQuery((prevState) => ({
+                ...prevState,
+                pageSize: e.target.value,
+              }))
+            }
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+          </select>
+        </div>
       </div>
       <div className="filter-search">
         <form

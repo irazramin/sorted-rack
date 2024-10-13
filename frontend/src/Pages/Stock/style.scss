@@ -1,0 +1,11 @@
+.ticket-id-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e8e8e8;
+  outline: none;
+  border-radius: 5px;
+
+  &:focus {
+    border: 1px solid #06377e;
+  }
+}

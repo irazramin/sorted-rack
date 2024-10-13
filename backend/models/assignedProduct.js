@@ -18,6 +18,11 @@ const assignedProductSchema = mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    ticket: {
+      type: mongoose.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
     status: {
       type: String,
       required: true,

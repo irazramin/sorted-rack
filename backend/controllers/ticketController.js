@@ -2,7 +2,7 @@ const StatusCodes = require("http-status-codes");
 const User = require("../models/user");
 const Ticket = require("../models/tickets");
 const ticketService = require("../services/ticketService");
-const CustomError  = require("../errors");
+const CustomError = require("../errors");
 module.exports.createTicker = async (req, res) => {
   try {
     const { userId } = req.user;
@@ -27,7 +27,7 @@ module.exports.createTicker = async (req, res) => {
       userId,
     });
 
-    return res.status(StatusCodes.OK).json({ data: response });
+    return res.staCtus(StatusCodes.OK).json({ data: response });
   } catch (error) {
     console.log(error);
     return res
@@ -40,7 +40,7 @@ module.exports.getAllTickets = async (req, res) => {
   try {
     const { userId } = req.user;
     const user = await User.findById(userId);
-    const { category, status, priority, search } = req.query;
+    const { category, status, priority, search, page, pageSize } = req.query;
 
     const query = {
       userId,
@@ -66,9 +66,10 @@ module.exports.getAllTickets = async (req, res) => {
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 
-    const response = await ticketService.getAllTickets(query);
+    const response = await ticketService.getAllTickets(query, page, pageSize);
+    const totalData = await Ticket.countDocuments({ userId });
 
-    return res.status(StatusCodes.OK).json({ data: response });
+    return res.status(StatusCodes.OK).json({ data: response, totalData });
   } catch (error) {
     console.log(error);
     return res
@@ -82,7 +83,9 @@ module.exports.getAllTicketsForAdmin = async (req, res) => {
     const { userId } = req.user;
     const user = await User.findById(userId);
 
-    const { category, status, priority, search } = req.query;
+    const { category, status, priority, search, page, pageSize } = req.query;
+
+    console.log("from controller");
 
     const query = {};
 
@@ -104,9 +107,10 @@ module.exports.getAllTicketsForAdmin = async (req, res) => {
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 
-    const response = await ticketService.getAllTickets(query);
+    const response = await ticketService.getAllTickets(query, page, pageSize);
+    const totalData = await Ticket.countDocuments({});
 
-    return res.status(StatusCodes.OK).json({ data: response });
+    return res.status(StatusCodes.OK).json({ data: response, totalData });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -275,8 +279,8 @@ module.exports.getAssignedTickets = async (req, res) => {
       query.ticketStatus = status;
     }
 
-    if (adminId) {
-      query.assignTo = adminId;
+    if (userId) {
+      query.assignTo = userId;
     }
 
     if (!user) throw new CustomError.NotFoundError("User not found!");

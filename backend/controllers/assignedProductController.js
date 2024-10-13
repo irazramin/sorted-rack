@@ -1,15 +1,21 @@
 const AssignedProduct = require("../models/assignedProduct");
 const User = require("../models/user");
 const Product = require("../models/product");
+const Ticket = require("../models/tickets");
 
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const checkPermission = require("../utility/checkPermission");
 
 const createAssignedProduct = async (req, res) => {
-  const { branch, user: userId, product: productId } = req.body;
-  if (!branch || !userId) {
-    throw new CustomError.BadRequestError("Please provide branch and userId");
+  const { branch, user: userId, product: productId, ticketId } = req.body;
+
+  const ticket = await Ticket.findOne({ uniqueId: ticketId });
+
+  if (!branch || !userId || !ticket) {
+    throw new CustomError.BadRequestError(
+      "Please provide branch and userId && ticketId"
+    );
   }
 
   const verifyuser = await User.findOne({ _id: userId });
@@ -56,6 +62,7 @@ const createAssignedProduct = async (req, res) => {
       user: userId,
       product: productId,
       assignedBy: req.user.userId,
+      ticket: ticket?._id,
     });
     await Product.findOneAndUpdate(
       { _id: productId },
@@ -63,6 +70,10 @@ const createAssignedProduct = async (req, res) => {
         tag: "assigned",
       }
     );
+
+    await Ticket.findByIdAndUpdate(ticket?._id, {
+      ticketStatus: "Resolve",
+    });
   } catch (error) {
     res.send(error.message);
   }

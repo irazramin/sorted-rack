@@ -13,22 +13,26 @@ import TableHeader from "../../component/Shared/Table/TableHeader";
 import { tableHeader } from "./utils/tableHeaders";
 import FilterSection from "../../component/Shared/FilterBar";
 import CommonCard from "../../Common/CommonCard";
+import Pagination from "rc-pagination";
+import "rc-pagination/assets/index.css";
+
 const RequestedTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState("");
   const [tickets, setTickets] = useState([]);
-  const [showCommentSidebar, setShowCommentSidebar] = useState(false);
   const [comments, setComments] = useState([]);
   const [ticket, setTicket] = useState({});
   const [status, setStatus] = useState({});
   const [show, setShow] = useState(false);
   const [layoutSetting, setLayoutSetting] = useState("table");
   const navigate = useNavigate();
-
+  const [totalData, setTotalData] = useState(0);
   const [query, setQuery] = useState({
     category: "",
     priority: "",
     status: "",
     search: "",
+    currentPage: 1,
+    offset: 10,
   });
   useEffect(() => {
     fetchUserDetails();
@@ -37,7 +41,7 @@ const RequestedTickets = () => {
   const fetchUserDetails = async () => {
     try {
       const res = await axiosSecure.get(
-        `/admin/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}`,
+        `/admin/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}&page=${query.currentPage}&pageSize=${query.offset}`,
         {
           headers: { Authorization: userHeader() },
         }
@@ -53,11 +57,6 @@ const RequestedTickets = () => {
     }
   };
 
-  const handleCommentSectionShow = (id) => {
-    setShowCommentSidebar((prevState) => !prevState);
-    setSelectedTicket(id);
-  };
-
   const fetchingSingleTicket = async () => {
     try {
       const response = await axiosSecure.get(
@@ -69,7 +68,7 @@ const RequestedTickets = () => {
         }
       );
       setComments(response?.data?.data?.comments);
-      setTicket(response?.data?.data);
+      setTotalData(response.data.totalData);
     } catch (error) {
       console.error(error);
     }
@@ -146,6 +145,12 @@ const RequestedTickets = () => {
     }));
   };
 
+  const handlePageChange = (page) => {
+    setQuery((prevState) => ({ ...prevState, currentPage: page }));
+  };
+
+  const startItem = (query.currentPage - 1) * query.offset + 1;
+  const endItem = Math.min(query.currentPage * query.offset, totalData);
   return (
     <div className="p-4 ticket-list">
       <div className="title-bar d-flex align-items-center justify-content-between">
@@ -170,7 +175,7 @@ const RequestedTickets = () => {
                   return (
                     <tr>
                       <td>
-                        <span className="ticket-id">{ticket?._id}</span>
+                        <span className="ticket-id">{ticket?.uniqueId}</span>
                       </td>
                       <td>{ticket?.ticketCategory}</td>
                       <td className="priority">
@@ -327,6 +332,19 @@ const RequestedTickets = () => {
               })}
           </div>
         )}
+        <div className="d-flex align-items-center justify-content-between mt-2">
+          <div>
+            <span>
+              {`Showing ${startItem} to ${endItem} of ${totalData} results`}
+            </span>
+          </div>
+          <Pagination
+            current={query.currentPage}
+            total={totalData}
+            pageSize={query?.offset}
+            onChange={handlePageChange}
+          />
+        </div>
       </div>
 
       <CustomModal

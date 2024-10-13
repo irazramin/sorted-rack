@@ -12,14 +12,14 @@ import { Link } from "react-router-dom";
 import { axiosSecure } from "../../../api/axios";
 import useAxios from "../../../Hooks/useAxios";
 import Modal from "react-bootstrap/Modal";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { Input, Typeahead } from "react-bootstrap-typeahead";
 import { convertDate } from "../../../Utility/utility";
 import { StockContext } from "../../../contexts/StockContext";
 import PaginationComponent from "../../../component/Pagination/Pagination";
 import { Col, Form } from "react-bootstrap";
 import { Toaster } from "../../../component/Toaster/Toaster";
 import { BASE_URL } from "../../../Utility/URL";
-
+import "../style.scss";
 const deleteStock = (stockItemId) =>
   axiosSecure.delete(`/product/${stockItemId}`, {
     headers: {
@@ -47,7 +47,7 @@ const ListStock = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
   const removeDeviceIdRef = useRef(null);
-
+  const [ticketId, setTicketId] = useState("");
   const handleAssignmentModal = () =>
     setShowAssignmentModal(!showAssignmentModal);
   const handleRemoveDeviceModal = () => {
@@ -115,6 +115,7 @@ const ListStock = () => {
       {
         branch: "Goa",
         user: selectedUserId,
+        ticketId: ticketId,
         product: selectedStockId,
       },
       {
@@ -322,9 +323,16 @@ const ListStock = () => {
 
         <Modal show={showAssignmentModal} onHide={handleAssignmentModal}>
           <Modal.Header closeButton>
-            <Modal.Title>Please select the user</Modal.Title>
+            <Modal.Title>Please select the user and ticket id</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <input
+              type="text"
+              placeholder="Enter ticket id"
+              name="ticketId"
+              className="mb-3 ticket-id-input"
+              onChange={(e) => setTicketId(e.target.value)}
+            />
             <Typeahead
               id="basic-example"
               onChange={setSelectedUserEmail}

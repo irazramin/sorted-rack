@@ -12,12 +12,15 @@ import { useParams } from "react-router-dom";
 import { formatCreatedAt } from "../../../Utility/dateFormatter";
 import TicketInfo from "../../../component/TicketDetails/TicketInfo";
 import ProductInfo from "../../../component/TicketDetails/ProductInfo";
+import { getUserDetails } from "../../../service";
 
 const ViewTicket = () => {
   const { id } = useParams();
   const [expandSection, setExpandSection] = useState(false);
   const [comments, setComments] = useState([]);
   const [ticket, setTicket] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const { role } = getUserDetails();
   const initialValues = {
     comment: "",
   };
@@ -44,7 +47,7 @@ const ViewTicket = () => {
 
   useEffect(() => {
     fetchingSingleTicket();
-  }, []);
+  }, [refresh]);
 
   const onSubmit = async (value) => {
     try {
@@ -97,11 +100,19 @@ const ViewTicket = () => {
               </ShadowLessCard>
             </Col>
             <Col xl={12}>
-              <TicketInfo ticket={ticket} />
+              <TicketInfo ticket={ticket} setRefresh={setRefresh} />
             </Col>
-            <Col xl={12}>
-              <ProductInfo ticket={ticket} />
-            </Col>
+            {role === "superadmin" || role === "admin" ? (
+              <Col xl={12}>
+                <ProductInfo
+                  ticket={ticket}
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                />
+              </Col>
+            ) : (
+              <></>
+            )}
           </Row>
         </Col>
         <Col xl={9}>

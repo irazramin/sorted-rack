@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./ticketList.scss";
 import { axiosSecure } from "../../../api/axios";
-import useAxios from "../../../Hooks/useAxios";
 import { userHeader } from "../../../Utility/userHeader";
 import CustomModal from "../../../Common/Modal";
 import { toast } from "react-toastify";
 import CommentSidebar from "../../../Common/CommentSidebar";
 import { formatCreatedAt } from "../../../Utility/dateFormatter";
 import Title from "../../../component/Shared/Title";
-import { ticketCategories } from "../utils/ticketCategories";
-import { ticketStatus } from "../utils/ticketStatus";
-import { ticketPriorities } from "../utils/ticketPriorities";
 import CommonCard from "../../../Common/CommonCard";
 import FilterSection from "../../../component/Shared/FilterBar";
+import Pagination from "rc-pagination";
+import "rc-pagination/assets/index.css";
 
 const TicketList = () => {
-  // const [error, loading, axiosFetch] = useAxios();
   const [show, setShow] = useState(false);
   const [showCommentSidebar, setShowCommentSidebar] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState("");
@@ -26,20 +22,23 @@ const TicketList = () => {
   const [ticket, setTicket] = useState({});
   const navigate = useNavigate();
   const [layoutSetting, setLayoutSetting] = useState("table");
+  const [totalData, setTotalData] = useState(0);
   const [query, setQuery] = useState({
     category: "",
     priority: "",
     status: "",
     search: "",
+    currentPage: 1,
+    offset: 10,
   });
   useEffect(() => {
-    fetchUserDetails();
+    fetchTicketDetails();
   }, [query]);
 
-  const fetchUserDetails = async () => {
+  const fetchTicketDetails = async () => {
     try {
       const res = await axiosSecure.get(
-        `/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}`,
+        `/ticket?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}&page=${query.currentPage}&pageSize=${query.offset}`,
         {
           headers: { Authorization: userHeader() },
         }
@@ -49,6 +48,7 @@ const TicketList = () => {
 
       if (res) {
         setTickets(res?.data?.data);
+        setTotalData(res.data.totalData);
       }
     } catch (error) {
       console.error(error);
@@ -87,11 +87,6 @@ const TicketList = () => {
     }
   };
 
-  const handleCommentSectionShow = (id) => {
-    setShowCommentSidebar((prevState) => !prevState);
-    setSelectedTicket(id);
-  };
-
   const fetchingSingleTicket = async () => {
     try {
       const response = await axiosSecure.get(`/ticket/${selectedTicket}`, {
@@ -117,6 +112,12 @@ const TicketList = () => {
       search: e.target.search.value,
     }));
   };
+
+  const handlePageChange = (page) => {
+    setQuery((prevState) => ({ ...prevState, currentPage: page }));
+  };
+  const startItem = (query.currentPage - 1) * query.offset + 1;
+  const endItem = Math.min(query.currentPage * query.offset, totalData);
   return (
     <div className="p-4 ticket-list">
       <div className="title-bar d-flex align-items-center justify-content-between">
@@ -155,9 +156,7 @@ const TicketList = () => {
                     return (
                       <tr key={ticket?._id}>
                         <td>
-                          <span className="ticket-id">
-                            {ticket?._id.slice(0, 5)}
-                          </span>
+                          <span className="ticket-id">{ticket?.uniqueId}</span>
                         </td>
                         <td>{ticket?.ticketCategory}</td>
                         <td>{ticket?.userId?.branch}</td>
@@ -313,6 +312,20 @@ const TicketList = () => {
               })}
           </div>
         )}
+
+        <div className="d-flex align-items-center justify-content-between mt-2">
+          <div>
+            <span>
+              {`Showing ${startItem} to ${endItem} of ${totalData} results`}
+            </span>
+          </div>
+          <Pagination
+            current={query.currentPage}
+            total={totalData}
+            pageSize={query?.offset}
+            onChange={handlePageChange}
+          />
+        </div>
       </div>
       <CustomModal
         show={show}
