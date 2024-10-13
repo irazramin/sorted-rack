@@ -259,7 +259,7 @@ module.exports.getAssignedTickets = async (req, res) => {
     const user = await User.findById(userId);
     const { adminId } = req.params;
 
-    const { category, status, priority, search } = req.query;
+    const { category, status, priority, search, page, pageSize } = req.query;
 
     const query = {};
 
@@ -285,9 +285,10 @@ module.exports.getAssignedTickets = async (req, res) => {
 
     if (!user) throw new CustomError.NotFoundError("User not found!");
 
-    const response = await ticketService.getAllTickets(query);
+    const response = await ticketService.getAllTickets(query, page, pageSize);
+    const totalData = await Ticket.countDocuments({ assignTo: userId });
 
-    return res.status(StatusCodes.OK).json({ data: response });
+    return res.status(StatusCodes.OK).json({ data: response, totalData });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

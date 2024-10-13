@@ -12,6 +12,7 @@ import { tableHeader } from "../RequestedTickets/utils/tableHeaders";
 import FilterSection from "../../component/Shared/FilterBar";
 import Title from "../../component/Shared/Title";
 import { ticketStatus } from "../Tickets/utils/ticketStatus";
+import Pagination from "rc-pagination/lib/Pagination";
 
 const AssignedTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState("");
@@ -23,12 +24,14 @@ const AssignedTickets = () => {
   const [show, setShow] = useState(false);
   const [layoutSetting, setLayoutSetting] = useState("table");
   const navigate = useNavigate();
-
+  const [totalData, setTotalData] = useState(0);
   const [query, setQuery] = useState({
     category: "",
     priority: "",
     status: "",
     search: "",
+    currentPage: 1,
+    offset: 10,
   });
   useEffect(() => {
     fetchTicketDetails();
@@ -37,7 +40,7 @@ const AssignedTickets = () => {
   const fetchTicketDetails = async () => {
     try {
       const res = await axiosSecure.get(
-        `/ticket/assigned-tickets?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}`,
+        `/ticket/assigned-tickets?category=${query.category}&priority=${query?.priority}&status=${query.status}&search=${query.search}&page=${query.currentPage}&pageSize=${query.offset}`,
         {
           headers: { Authorization: userHeader() },
         }
@@ -47,6 +50,7 @@ const AssignedTickets = () => {
 
       if (res) {
         setTickets(res?.data?.data);
+        setTotalData(res.data.totalData);
       }
     } catch (error) {
       console.error(error);
@@ -145,6 +149,13 @@ const AssignedTickets = () => {
       search: e.target.search.value,
     }));
   };
+
+  const handlePageChange = (page) => {
+    setQuery((prevState) => ({ ...prevState, currentPage: page }));
+  };
+
+  const startItem = (query.currentPage - 1) * query.offset + 1;
+  const endItem = Math.min(query.currentPage * query.offset, totalData);
 
   return (
     <div className="p-4 ticket-list">
@@ -327,6 +338,19 @@ const AssignedTickets = () => {
               })}
           </div>
         )}
+        <div className="d-flex align-items-center justify-content-between mt-2">
+          <div>
+            <span>
+              {`Showing ${startItem} to ${endItem} of ${totalData} results`}
+            </span>
+          </div>
+          <Pagination
+            current={query.currentPage}
+            total={totalData}
+            pageSize={query?.offset}
+            onChange={handlePageChange}
+          />
+        </div>
       </div>
 
       <CustomModal
