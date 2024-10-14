@@ -15,7 +15,24 @@ module.exports.createComment = async (req, res) => {
       comment,
     });
 
-    console.log("sdfas");
+    return res.status(StatusCodes.OK).json({ data: response });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+};
+
+module.exports.getTicketById = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { ticketId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const response = await commentService.getTicketById(ticketId);
 
     return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {

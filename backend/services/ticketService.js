@@ -9,9 +9,12 @@ const createTicket = async (body) => {
   }
 };
 
-const getAllTickets = async (query = {}) => {
+const getAllTickets = async (query = {}, page, limit) => {
   try {
+    const skip = (page - 1) * limit;
     let data = await ticketRepository.getAllTickets(query);
+    const totalItems = await ticketRepository.count();
+    const totalPages = Math.ceil(totalItems / limit);
 
     data = await Promise.all(
       data?.map(async (ticket) => {

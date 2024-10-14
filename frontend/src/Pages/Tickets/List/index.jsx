@@ -116,6 +116,7 @@ const TicketList = () => {
       search: e.target.search.value,
     }));
   };
+  
   return (
     <div className="p-4 ticket-list">
       <div className="title-bar d-flex align-items-center justify-content-between">

@@ -8,6 +8,17 @@ const createComment = async (body) => {
   }
 };
 
+const getTicketById = async (id) => {
+  try {
+    const data = await commentRepository.getTicketById(id);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Comment creating failed: " + error.message);
+  }
+};
+
 module.exports = {
   createComment,
+  getTicketById,
 };
