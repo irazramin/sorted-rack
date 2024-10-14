@@ -12,6 +12,8 @@ const createAssignedProduct = async (req, res) => {
 
   const ticket = await Ticket.findOne({ uniqueId: ticketId });
 
+  console.log(branch, userId, ticket)
+
   if (!branch || !userId || !ticket) {
     throw new CustomError.BadRequestError(
       "Please provide branch and userId && ticketId"

@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import Button from "../../../component/Shared/Button";
 import TextAreaField from "../../../component/Shared/Form/TextArea";
 import { useParams } from "react-router-dom";
-import { formatCreatedAt } from "../../../Utility/dateFormatter";
 import TicketInfo from "../../../component/TicketDetails/TicketInfo";
 import ProductInfo from "../../../component/TicketDetails/ProductInfo";
 import { getUserDetails } from "../../../service";
 
+import NewComment from "../../../component/Comments/NewComment";
 const ViewTicket = () => {
   const { id } = useParams();
   const [expandSection, setExpandSection] = useState(false);
@@ -24,7 +24,13 @@ const ViewTicket = () => {
   const initialValues = {
     comment: "",
   };
-  const { control, handleSubmit, watch, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: initialValues,
   });
 
@@ -47,7 +53,22 @@ const ViewTicket = () => {
 
   useEffect(() => {
     fetchingSingleTicket();
+    fetchingComments()
   }, [refresh]);
+
+  const fetchingComments = async () => {
+    try {
+      const response = await axiosSecure.get(`/comment/${id}`, {
+        headers: {
+          Authorization: userHeader(),
+        },
+      });
+      setComments(response?.data?.data);
+      reset({ comment: "" });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const onSubmit = async (value) => {
     try {
@@ -63,24 +84,17 @@ const ViewTicket = () => {
       });
 
       if (res) {
-        setComments((prevState) => {
-          return [
-            ...prevState,
-            {
-              comment: value.comment,
-              userId: ticket?.userId,
-              ticketId: ticket?._id,
-            },
-          ];
-        });
-
         reset({ comment: "" });
+        setComments((prevState) => [
+          { ...res.data.data, userId: ticket.userId },
+          ...prevState,
+        ]);
+        setExpandSection(false);
       }
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <div className="view-ticket">
       <Row>
@@ -154,7 +168,7 @@ const ViewTicket = () => {
                           control={control}
                           name="comment"
                           placeholder="Write a comment"
-                          // error={errors.comment}
+                          error={errors.comment}
                           cols={10}
                           rows={6}
                         />
@@ -186,16 +200,15 @@ const ViewTicket = () => {
                   </div>
 
                   <div className="comment-wrapper">
-                    <div className="comment">
-                      <img src={user} alt="" />
-                      <div className="info">
-                        <div className="name">
-                          <h4>
-                            {ticket?.userId?.fname} {ticket?.userId?.lname}
-                          </h4>
-                        </div>
-                      </div>
-                    </div>
+                    {comments?.length > 0 ? (
+                      comments?.map((comment) => {
+                        return (
+                          <NewComment key={comment?._id} comment={comment} />
+                        );
+                      })
+                    ) : (
+                      <p className="empty">No comment found</p>
+                    )}
                   </div>
                 </div>
               </ShadowLessCard>

@@ -3,7 +3,6 @@
   height: 100%;
   padding: 20px;
   overflow-y: auto;
-
   button {
     transition: all 0.5s ease;
 
@@ -11,9 +10,33 @@
       transform: scale(0.9);
     }
   }
+
   .title {
     font-size: 18px;
     font-weight: 600;
+  }
+  .role {
+    font-weight: 600;
+    font-size: 10px;
+    background-color: tomato;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+  .date {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .empty {
+    padding-top: 20px;
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
   }
   .user-info {
     display: flex;
@@ -81,12 +104,6 @@
       font-size: 20px;
       font-weight: 600;
       color: #333;
-    }
-    .date {
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
 
     .ticket-description {
@@ -184,13 +201,40 @@
     }
 
     .comment-wrapper {
+      &:last-child {
+        border-bottom: none;
+      }
       .comment {
         padding: 20px;
         border-bottom: 1px solid #e2e2e2;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        &:last-child {
+          border-bottom: none;
+        }
         img {
           width: 40px;
           height: 40px;
           object-fit: cover;
+        }
+        .date {
+          gap: 3px;
+          align-items: center;
+          font-weight: 500;
+          margin: 4px 0;
+          color: #999;
+        }
+
+        .name {
+          font-size: 13px;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .comment-text {
+          font-size: 12px;
+          margin: 0px;
         }
       }
     }

@@ -11,6 +11,14 @@ const createTicket = async (data) => {
   }
 };
 
+const count = async (id) => {
+  try {
+    return Tickets.countDocuments({ userId: id });
+  } catch (error) {
+    throw new Error("Tickets counting failed: " + error.message);
+  }
+};
+
 const getAllTickets = async (query = {}, limit, offset) => {
   try {
     console.log(limit, offset);
@@ -46,37 +54,48 @@ const getAllTicketsForAdmin = async (query = {}) => {
 
 const findTicketById = async (ticketId) => {
   try {
-    const ticketData = await Tickets.aggregate([
-      {
-        $match: {
-          _id: mongoose.Types.ObjectId(ticketId),
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "userId",
-        },
-      },
-      {
-        $unwind: "$userId",
-      },
+    // const ticketData = await Tickets.aggregate([
+    //   {
+    //     $match: {
+    //       _id: mongoose.Types.ObjectId(ticketId),
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "userId",
+    //       foreignField: "_id",
+    //       as: "userId",
+    //     },
+    //   },
+    //   {
+    //     $unwind: "$userId",
+    //   },
 
-      {
-        $lookup: {
-          from: "comments",
-          localField: "_id",
-          foreignField: "ticketId",
-          as: "comments",
-        },
-      },
-    ]);
+    //   {
+    //     $lookup: {
+    //       from: "comments",
+    //       localField: "_id",
+    //       foreignField: "ticketId",
+    //       as: "comments",
+    //     },
+    //   },
+    // ]);
 
     // console.log();
 
-    return ticketData.length ? ticketData[0] : null;
+    const ticketData = await Tickets.findById(ticketId).populate([
+     
+      {
+        path: "assignTo",
+        select: "_id fname lname email username",
+        model: user,
+      },
+    ]);
+
+    console.log("from the ", ticketData)
+    // return ticketData.length ? ticketData[0] : null;
+    return ticketData;
   } catch (error) {
     throw new Error("Ticket fetching failed: " + error.message);
   }

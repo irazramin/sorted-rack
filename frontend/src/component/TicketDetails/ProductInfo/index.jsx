@@ -62,8 +62,14 @@ const ProductInfo = ({ ticket, refresh, setRefresh }) => {
         }
       );
 
+
+      console.log({   branch: ticket?.userId?.branch || "Goa",
+        user: ticket?.userId?._id,
+        product: e.value,
+        ticketId: ticket.uniqueId,})
+
       if (response) {
-        setShowAssignProduct(false);
+        setShowAssignProduct((prevState) => !prevState);
         setRefresh((prevState) => !prevState);
         toast.success("Product assigned successfully");
       }
@@ -99,7 +105,7 @@ const ProductInfo = ({ ticket, refresh, setRefresh }) => {
               </div>
             </div>
           </div>
-          {availableProducts?.stock && ticket?.assignTo === userId ? (
+          {availableProducts?.stock && ticket?.assignTo?._id === userId ? (
             <>
               {!showAssignProduct ? (
                 <button onClick={handleShowAssignProductModal}>
@@ -108,12 +114,13 @@ const ProductInfo = ({ ticket, refresh, setRefresh }) => {
               ) : (
                 <></>
               )}
+                 
             </>
           ) : (
             <></>
           )}
         </div>
-        {availableProducts?.stock && ticket?.assignTo === userId ? (
+        {availableProducts?.stock && ticket?.assignTo?._id === userId ? (
           showAssignProduct && (
             <AssignProductModal
               title="Select product"

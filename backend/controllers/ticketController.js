@@ -27,7 +27,7 @@ module.exports.createTicker = async (req, res) => {
       userId,
     });
 
-    return res.staCtus(StatusCodes.OK).json({ data: response });
+    return res.status(StatusCodes.OK).json({ data: response });
   } catch (error) {
     console.log(error);
     return res
@@ -112,6 +112,7 @@ module.exports.getAllTicketsForAdmin = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({ data: response, totalData });
   } catch (error) {
+    console.log(error)
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error" });
