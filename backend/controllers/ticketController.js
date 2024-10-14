@@ -3,6 +3,7 @@ const User = require("../models/user");
 const Ticket = require("../models/tickets");
 const ticketService = require("../services/ticketService");
 const CustomError = require("../errors");
+const { default: mongoose } = require("mongoose");
 module.exports.createTicker = async (req, res) => {
   try {
     const { userId } = req.user;
@@ -296,3 +297,39 @@ module.exports.getAssignedTickets = async (req, res) => {
       .json({ message: "Internal server error" });
   }
 };
+
+module.exports.getTicketCount = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    if (!user) throw new CustomError.NotFoundError("User not found!");
+
+    const counts = await Ticket.aggregate([
+      { $match: { userId: mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: '$ticketStatus',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const totalCount = counts.reduce((acc, curr) => acc + curr.count, 0);
+
+    const response = {
+      all: totalCount,
+      newTickets: counts.find(c => c._id === 'New ticket')?.count || 0,
+      holdTickets: counts.find(c => c._id === 'Hold')?.count || 0,
+      inProgress: counts.find(c => c._id === 'In progress')?.count || 0,
+      done: counts.find(c => c._id === 'Resolved')?.count || 0,
+    };
+
+    return res.status(StatusCodes.OK).json({ data: response});
+
+  } catch (error) {
+    console.log(error)
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  }
+}

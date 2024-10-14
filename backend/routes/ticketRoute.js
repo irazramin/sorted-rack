@@ -13,10 +13,12 @@ const {
   findTicketByIdAndDelete,
   getAllTicketsForAdmin,
   getAssignedTickets,
+  getTicketCount,
 } = require("../controllers/ticketController");
 
 router.post("/", authenticateUser, createTicker);
 router.get("/", authenticateUser, getAllTickets);
+router.get("/get-ticket-count", authenticateUser, getTicketCount);
 
 router.get(
   "/assigned-tickets",

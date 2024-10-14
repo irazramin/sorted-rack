@@ -1,0 +1,41 @@
+.dashboard-wrapper {
+    padding: 20px;
+    background-color: #f1f5fc;
+    height: 100%;
+    overflow-y: auto;
+    .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        width: 300px;
+        flex-direction: row;
+        border: none;
+    }
+    .icon {
+        background-color: #f0f4ff;
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+    }
+    .icon i {
+        color: #6a5acd;
+        font-size: 24px;
+    }
+    .text {
+        color: #4a4a4a;
+    }
+    .text h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: normal;
+    }
+    .text p {
+        margin: 5px 0 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+}
